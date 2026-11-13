@@ -908,7 +908,8 @@ $("search").addEventListener("click",async()=>{
 
     
 
-/* CARI SEMUA LALUAN TERUS */
+
+/* CARI LALUAN TERUS SEMUA OPERATOR */
 
 for(const data of datasets){
 
@@ -932,20 +933,31 @@ for(const data of datasets){
   }
 }
 
-/* SUSUN LALUAN TERUS */
+/* UTAMAKAN LRT / RAPID RAIL */
 
-direct.sort((a,b) =>
+const railDirect = direct.filter(
+  item => item.data.name === "Rapid Rail KL"
+);
+
+let preferredDirect =
+  railDirect.length > 0
+    ? railDirect
+    : direct;
+
+/* SUSUN MENGIKUT MASA BERLEPAS */
+
+preferredDirect.sort((a,b) =>
   (timeToMinutes(a.a.departure_time || a.a.arrival_time) ?? 0) -
   (timeToMinutes(b.a.departure_time || b.a.arrival_time) ?? 0)
 );
 
-/* UTAMAKAN LALUAN TERUS */
+/* PILIH LALUAN TERBAIK */
 
 let all = [];
 
-if(direct.length > 0){
+if(preferredDirect.length > 0){
 
-  all = direct;
+  all = preferredDirect;
 
 }else{
 
@@ -965,21 +977,41 @@ all = all.slice(0,10);
 
 
 
+
     results.innerHTML = all.length
       ? all.map(showResult).join("")
       : "Tiada laluan ditemui dalam data yang tersedia untuk carian ini. Cuba nama stesen yang lebih ringkas atau semak tarikh perjalanan.";
 
     
 
+
+const railData = datasets.find(
+  data => data.name === "Rapid Rail KL"
+);
+
+const describeRailStops = query => {
+  if(!railData) return "DATA RAPID RAIL TIADA";
+
+  const matches = findStops(railData,query);
+
+  if(!matches.length) return "TIADA PADANAN";
+
+  return matches.map(stop => {
+    const trips = new Set(
+      railData.tripsByStop.get(stop.stop_id) || []
+    );
+
+    return stop.stop_name +
+      " [ID: " + stop.stop_id +
+      "; Trip: " + trips.size + "]";
+  }).join(" || ");
+};
+
 status.textContent =
-  "Carian selesai. " + all.length +
-  " pilihan. Padanan stesen: " +
-  datasets.map(data =>
-    data.name + " (Mula: " +
-    findStops(data,from).length +
-    ", Destinasi: " +
-    findStops(data,to).length + ")"
-  ).join(" | ");
+  "DIAGNOSTIK RAPID RAIL KL\n" +
+  "Mula: " + describeRailStops(from) +
+  "\nDestinasi: " + describeRailStops(to);
+
 
 
   }catch(error){
