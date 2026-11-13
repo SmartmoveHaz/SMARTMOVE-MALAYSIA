@@ -989,50 +989,62 @@ const railData = datasets.find(
   data => data.name === "Rapid Rail KL"
 );
 
-
 let railReport = [];
 
 if(railData){
 
-  const starts = findStops(railData,from);
-  const ends = findStops(railData,to);
+  const startRows = railData.stopTimes.filter(
+    row => row.stop_id === "KJ14"
+  );
 
-  for(const start of starts){
-    for(const end of ends){
+  const tripIds = [...new Set(
+    startRows.map(row => row.trip_id)
+  )];
 
-      if(
-        start.stop_id !== "KJ14" ||
-        end.stop_id !== "KJ13"
-      ) continue;
+  let matched = [];
+  let activeCount = 0;
 
-      for(const a of railData.stopTimes.filter(
-        row => row.stop_id === start.stop_id
-      )){
+  for(const tripId of tripIds){
 
-        const b = railData.stopTimes.find(
-          row =>
-            row.trip_id === a.trip_id &&
-            row.stop_id === end.stop_id &&
-            Number(row.stop_sequence) >
-            Number(a.stop_sequence)
-        );
+    const a = startRows.find(
+      row => row.trip_id === tripId
+    );
 
-        if(!b) continue;
+    const b = railData.stopTimes.find(
+      row =>
+        row.trip_id === tripId &&
+        row.stop_id === "KJ13" &&
+        Number(row.stop_sequence) >
+        Number(a.stop_sequence)
+    );
 
-        railReport.push(
-          "Trip: " + a.trip_id +
-          " | Berlepas: " + a.departure_time +
-          " | Tiba: " + b.arrival_time +
-          " | Aktif: " +
-          serviceRuns(railData,a.trip_id,date)
-        );
-      }
-    }
+    if(!b) continue;
+
+    const active = serviceRuns(
+      railData,tripId,date
+    );
+
+    if(active) activeCount++;
+
+    matched.push(
+      tripId +
+      " | " + a.departure_time +
+      " → " + b.arrival_time +
+      " | Aktif: " + active
+    );
   }
+
+  railReport = [
+    "Jumlah rekod KJ14: " + startRows.length,
+    "Jumlah trip unik: " + tripIds.length,
+    "Trip sampai KJ13: " + matched.length,
+    "Trip aktif: " + activeCount,
+    ...matched.slice(0,15)
+  ];
 }
 
 status.textContent =
-  "MASA SEBENAR TRIP LRT\n" +
+  "SEMAKAN DATA LRT\n" +
   railReport.join("\n");
 
 
