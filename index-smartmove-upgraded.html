@@ -989,28 +989,69 @@ const railData = datasets.find(
   data => data.name === "Rapid Rail KL"
 );
 
-const describeRailStops = query => {
-  if(!railData) return "DATA RAPID RAIL TIADA";
+let railReport = [];
 
-  const matches = findStops(railData,query);
+if(railData){
 
-  if(!matches.length) return "TIADA PADANAN";
+  const starts = findStops(railData,from);
+  const ends = findStops(railData,to);
 
-  return matches.map(stop => {
-    const trips = new Set(
-      railData.tripsByStop.get(stop.stop_id) || []
-    );
+  for(const start of starts){
+    for(const end of ends){
 
-    return stop.stop_name +
-      " [ID: " + stop.stop_id +
-      "; Trip: " + trips.size + "]";
-  }).join(" || ");
-};
+      let common = 0;
+      let active = 0;
+      let afterTime = 0;
+
+      for(const a of railData.stopTimes.filter(
+        row => row.stop_id === start.stop_id
+      )){
+
+        const b = railData.stopTimes.find(
+          row =>
+            row.trip_id === a.trip_id &&
+            row.stop_id === end.stop_id &&
+            Number(row.stop_sequence) >
+            Number(a.stop_sequence)
+        );
+
+        if(!b) continue;
+
+        common++;
+
+        if(!serviceRuns(railData,a.trip_id,date)){
+          continue;
+        }
+
+        active++;
+
+        const departure = timeToMinutes(
+          a.departure_time || a.arrival_time
+        );
+
+        if(
+          requestedTime === null ||
+          departure === null ||
+          departure >= requestedTime
+        ){
+          afterTime++;
+        }
+      }
+
+      railReport.push(
+        start.stop_id + " → " + end.stop_id +
+        ": Trip sama " + common +
+        ", Aktif " + active +
+        ", Selepas 08:00 " + afterTime
+      );
+    }
+  }
+}
 
 status.textContent =
-  "DIAGNOSTIK RAPID RAIL KL\n" +
-  "Mula: " + describeRailStops(from) +
-  "\nDestinasi: " + describeRailStops(to);
+  "UJIAN TRIP RAPID RAIL\n" +
+  railReport.join("\n");
+
 
 
 
