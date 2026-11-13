@@ -165,6 +165,31 @@ function searchTransfer(data,start,end,date){
 }
 
 function showResult(item){
+  if(item.type==="direct"){
+    return `
+      <div class="result">
+        <b>✓ Laluan terus</b>
+        <p>${item.data.name}</p>
+        <p>${routeName(item.data,item.trip)}</p>
+        <p>Berlepas: ${item.a.departure_time||"-"}</p>
+        <p>Tiba: ${item.b.arrival_time||"-"}</p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="result">
+      <b>↔ Laluan dengan satu pertukaran</b>
+      <p>${item.data.name}</p>
+      <p>Laluan 1: ${routeName(item.data,item.t1)}</p>
+      <p>Berlepas: ${item.boarding.departure_time||"-"}</p>
+      <p>Tempat pertukaran: ${item.mid.stop_id}</p>
+      <p>Laluan 2: ${routeName(item.data,item.t2)}</p>
+      <p>Sambung: ${item.transfer.departure_time||"-"}</p>
+      <p>Tiba: ${item.finalStop.arrival_time||"-"}</p>
+    </div>
+  `;
+}
  if(item.type==="direct"){
   return `<div class="result"><b>Laluan terus</b><p>${item.data.name}</p>
   <p>${routeName(item.data,item.trip)}</p>
