@@ -969,9 +969,16 @@ all = all.slice(0,10);
       ? all.map(showResult).join("")
       : "Tiada laluan ditemui dalam data yang tersedia untuk carian ini. Cuba nama stesen yang lebih ringkas atau semak tarikh perjalanan.";
 
-    status.textContent =
-      "Carian selesai. " + all.length +
-      " pilihan ditemui. Data yang dipaparkan ialah jadual statik, bukan masa nyata.";
+    
+status.textContent =
+  "Carian selesai. " + all.length +
+  " pilihan ditemui. Sumber data: " +
+  datasets.map(data =>
+    data.name + " (" +
+    data.stops.length.toLocaleString("ms-MY") +
+    " hentian)"
+  ).join(" | ") +
+  ". Jadual statik, bukan masa nyata.";
 
   }catch(error){
 
