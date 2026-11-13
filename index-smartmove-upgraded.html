@@ -989,6 +989,7 @@ const railData = datasets.find(
   data => data.name === "Rapid Rail KL"
 );
 
+
 let railReport = [];
 
 if(railData){
@@ -999,9 +1000,10 @@ if(railData){
   for(const start of starts){
     for(const end of ends){
 
-      let common = 0;
-      let active = 0;
-      let afterTime = 0;
+      if(
+        start.stop_id !== "KJ14" ||
+        end.stop_id !== "KJ13"
+      ) continue;
 
       for(const a of railData.stopTimes.filter(
         row => row.stop_id === start.stop_id
@@ -1017,40 +1019,22 @@ if(railData){
 
         if(!b) continue;
 
-        common++;
-
-        if(!serviceRuns(railData,a.trip_id,date)){
-          continue;
-        }
-
-        active++;
-
-        const departure = timeToMinutes(
-          a.departure_time || a.arrival_time
+        railReport.push(
+          "Trip: " + a.trip_id +
+          " | Berlepas: " + a.departure_time +
+          " | Tiba: " + b.arrival_time +
+          " | Aktif: " +
+          serviceRuns(railData,a.trip_id,date)
         );
-
-        if(
-          requestedTime === null ||
-          departure === null ||
-          departure >= requestedTime
-        ){
-          afterTime++;
-        }
       }
-
-      railReport.push(
-        start.stop_id + " → " + end.stop_id +
-        ": Trip sama " + common +
-        ", Aktif " + active +
-        ", Selepas 08:00 " + afterTime
-      );
     }
   }
 }
 
 status.textContent =
-  "UJIAN TRIP RAPID RAIL\n" +
+  "MASA SEBENAR TRIP LRT\n" +
   railReport.join("\n");
+
 
 
 
