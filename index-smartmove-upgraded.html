@@ -902,53 +902,68 @@ $("search").addEventListener("click",async()=>{
     let direct = [];
     let transfers = [];
 
-    /* CUBA CARI LALUAN TERUS */
-
-    for(const data of datasets){
-
-      const starts = findStops(data,from);
-      const ends = findStops(data,to);
-
-      for(const start of starts){
-        for(const end of ends){
-
-          direct.push(
-            ...searchDirect(
-              data,
-              start,
-              end,
-              date,
-              requestedTime
-            )
-          );
-
-        }
-      }
-    }
-
-    direct.sort(
-      (a,b) =>
-        timeToMinutes(a.a.departure_time) -
-        timeToMinutes(b.a.departure_time)
-    );
-
-    let all = direct.slice(0,10);
-
     
-/* CARI PERTUKARAN ANTARA BAS DAN TREN */
+/* CARI SEMUA LALUAN TERUS DAN PERTUKARAN */
 
-if(!all.length){
+for(const data of datasets){
 
-  transfers = searchTransferAcrossDatasets(
-    datasets,
-    from,
-    to,
-    date,
-    requestedTime
-  );
+  const starts = findStops(data,from);
+  const ends = findStops(data,to);
 
-  all = transfers.slice(0,10);
+  for(const start of starts){
+    for(const end of ends){
+
+      direct.push(
+        ...searchDirect(
+          data,
+          start,
+          end,
+          date,
+          requestedTime
+        )
+      );
+
+    }
+  }
 }
+
+/* SUSUN LALUAN TERUS */
+
+direct.sort((a,b) =>
+  timeToMinutes(a.a.departure_time || a.a.arrival_time) -
+  timeToMinutes(b.a.departure_time || b.a.arrival_time)
+);
+
+/* CARI PERTUKARAN WALAUPUN ADA LALUAN TERUS */
+
+transfers = searchTransferAcrossDatasets(
+  datasets,
+  from,
+  to,
+  date,
+  requestedTime
+);
+
+/* GABUNGKAN SEMUA KEPUTUSAN */
+
+let all = [...direct, ...transfers];
+
+all.sort((a,b) => {
+
+  const timeA = a.type === "direct"
+    ? a.a.departure_time || a.a.arrival_time
+    : a.boarding.departure_time || a.boarding.arrival_time;
+
+  const timeB = b.type === "direct"
+    ? b.a.departure_time || b.a.arrival_time
+    : b.boarding.departure_time || b.boarding.arrival_time;
+
+  return (timeToMinutes(timeA) ?? 0) -
+         (timeToMinutes(timeB) ?? 0);
+});
+
+all = all.slice(0,10);
+
 
     results.innerHTML = all.length
       ? all.map(showResult).join("")
