@@ -129,7 +129,7 @@ button:disabled{opacity:.6}
   <label for="time">Masa perjalanan</label>
   <input id="time" type="time" value="08:00">
 
-  <button id="search" type="button" onclick="document.getElementById('status').textContent='Butang berfungsi!';">Cari laluan</button>
+  <button id="search" type="button">Cari laluan</button>
 
   <div id="status" role="status">
     Sedia untuk mencari perjalanan.
@@ -600,149 +600,157 @@ function searchDirect(
     .slice(0,5);
 }
 
-/* CARI LALUAN SATU PERTUKARAN */
 
-function searchTransfer(
-  data,
-  start,
-  end,
+/* CARI LALUAN SATU PERTUKARAN ANTARA OPERATOR */
+
+function searchTransferAcrossDatasets(
+  allData,
+  from,
+  to,
   date,
   requestedTime
 ){
 
-  const firstTripIds = [
-    ...new Set(data.tripsByStop.get(start.stop_id) || [])
-  ];
-
-  const secondTripIds = [
-    ...new Set(data.tripsByStop.get(end.stop_id) || [])
-  ];
-
   const output = [];
-  const secondByStop = new Map();
 
-  for(const tripId of secondTripIds){
+  const starts = [];
+  const ends = [];
 
-    if(!serviceRuns(data,tripId,date)){
-      continue;
+  for(const data of allData){
+
+    for(const stop of findStops(data,from)){
+      starts.push({data,stop});
     }
 
-    for(const row of getStopSequence(data,tripId)){
-
-      if(!secondByStop.has(row.stop_id)){
-        secondByStop.set(row.stop_id,[]);
-      }
-
-      secondByStop.get(row.stop_id).push({
-        tripId,
-        row
-      });
+    for(const stop of findStops(data,to)){
+      ends.push({data,stop});
     }
   }
 
-  for(const firstId of firstTripIds){
+  for(const first of starts){
 
-    if(!serviceRuns(data,firstId,date)){
-      continue;
-    }
+    const data1 = first.data;
+    const start = first.stop;
 
-    const firstRows = getStopSequence(data,firstId);
+    for(const firstTripId of (data1.tripsByStop.get(start.stop_id) || [])){
 
-    const boardingIndex = firstRows.findIndex(
-      row => row.stop_id === start.stop_id
-    );
+      if(!serviceRuns(data1,firstTripId,date)) continue;
 
-    if(boardingIndex < 0) continue;
+      const firstRows = getStopSequence(data1,firstTripId);
 
-    const boarding = firstRows[boardingIndex];
+      const boardingIndex = firstRows.findIndex(
+        row => row.stop_id === start.stop_id
+      );
 
-    const dep = timeToMinutes(
-      boarding.departure_time ||
-      boarding.arrival_time
-    );
+      if(boardingIndex < 0) continue;
 
-    if(
-      requestedTime !== null &&
-      dep !== null &&
-      dep < requestedTime
-    ){
-      continue;
-    }
+      const boarding = firstRows[boardingIndex];
 
-    for(const mid of firstRows.slice(boardingIndex+1)){
+      const departure = timeToMinutes(
+        boarding.departure_time || boarding.arrival_time
+      );
 
-      const candidates =
-        secondByStop.get(mid.stop_id) || [];
+      if(
+        requestedTime !== null &&
+        departure !== null &&
+        departure < requestedTime
+      ) continue;
 
-      for(const candidate of candidates){
+      for(const mid of firstRows.slice(boardingIndex+1)){
 
-        const secondRows = getStopSequence(
-          data,
-          candidate.tripId
-        );
+        const firstMidStop = data1.stopById.get(mid.stop_id);
+        if(!firstMidStop) continue;
 
-        const finalIndex = secondRows.findIndex(
-          row => row.stop_id === end.stop_id
-        );
+        const midName = norm(firstMidStop.stop_name);
 
-        const transferIndex = secondRows.findIndex(
-          row => row.stop_id === mid.stop_id
-        );
+        if(!midName) continue;
 
-        if(
-          transferIndex < 0 ||
-          finalIndex <= transferIndex
-        ){
-          continue;
-        }
+        for(const second of allData){
 
-        if(candidate.tripId === firstId){
-          continue;
-        }
+          const data2 = second;
 
-        const transferTime = timeToMinutes(
-          candidate.row.departure_time ||
-          candidate.row.arrival_time
-        );
+          for(const transferStop of data2.stops){
 
-        const firstArrival = timeToMinutes(
-          mid.arrival_time ||
-          mid.departure_time
-        );
+            if(norm(transferStop.stop_name) !== midName) continue;
 
-        if(
-          transferTime !== null &&
-          firstArrival !== null &&
-          transferTime < firstArrival
-        ){
-          continue;
-        }
+            const secondTripIds =
+              data2.tripsByStop.get(transferStop.stop_id) || [];
 
-        const firstMidIndex = firstRows.findIndex(
-          row => row.stop_id === mid.stop_id
-        );
+            for(const secondTripId of secondTripIds){
 
-        output.push({
-          type:"transfer",
-          data,
-          t1:data.tripById.get(firstId),
-          t2:data.tripById.get(candidate.tripId),
-          boarding,
-          mid,
-          transfer:candidate.row,
-          finalStop:secondRows[finalIndex],
+              if(
+                data1 === data2 &&
+                firstTripId === secondTripId
+              ) continue;
 
-          firstStops:firstRows
-            .slice(boardingIndex,firstMidIndex+1)
-            .map(row=>stopLabel(data,row.stop_id)),
+              if(!serviceRuns(data2,secondTripId,date)) continue;
 
-          secondStops:secondRows
-            .slice(transferIndex,finalIndex+1)
-            .map(row=>stopLabel(data,row.stop_id))
-        });
+              const secondRows = getStopSequence(
+                data2,
+                secondTripId
+              );
 
-        if(output.length >= 5){
-          return output;
+              const transferIndex = secondRows.findIndex(
+                row => row.stop_id === transferStop.stop_id
+              );
+
+              if(transferIndex < 0) continue;
+
+              const finalIndex = secondRows.findIndex(
+                (row,index) =>
+                  index > transferIndex &&
+                  ends.some(item =>
+                    item.data === data2 &&
+                    item.stop.stop_id === row.stop_id
+                  )
+              );
+
+              if(finalIndex < 0) continue;
+
+              const transfer = secondRows[transferIndex];
+              const finalStop = secondRows[finalIndex];
+
+              const arrival = timeToMinutes(
+                mid.arrival_time || mid.departure_time
+              );
+
+              const nextDeparture = timeToMinutes(
+                transfer.departure_time || transfer.arrival_time
+              );
+
+              if(
+                arrival !== null &&
+                nextDeparture !== null &&
+                nextDeparture < arrival
+              ) continue;
+
+              output.push({
+                type:"transfer",
+                data:data1,
+                data2:data2,
+                t1:data1.tripById.get(firstTripId),
+                t2:data2.tripById.get(secondTripId),
+                boarding,
+                mid,
+                transfer,
+                finalStop,
+
+                firstStops:firstRows
+                  .slice(boardingIndex,firstRows.findIndex(
+                    row => row.stop_id === mid.stop_id
+                  )+1)
+                  .map(row => stopLabel(data1,row.stop_id)),
+
+                secondStops:secondRows
+                  .slice(transferIndex,finalIndex+1)
+                  .map(row => stopLabel(data2,row.stop_id))
+              });
+
+              if(output.length >= 10) {
+                return output;
+              }
+            }
+          }
         }
       }
     }
@@ -750,6 +758,7 @@ function searchTransfer(
 
   return output;
 }
+
 
 /* PAPAR KEPUTUSAN LALUAN */
 
@@ -802,6 +811,7 @@ function showResult(item){
 
       <p>
         <span class="pill">${esc(item.data.name)}</span>
+<span class="pill">${esc(item.data2.name)}</span>
       </p>
 
       <p><b>Laluan 1:</b>
@@ -817,7 +827,7 @@ function showResult(item){
       </p>
 
       <p><b>Laluan 2:</b>
-        ${esc(routeName(item.data,item.t2))}
+        ${esc(routeName(item.data2,item.t2))}
       </p>
 
       <p><b>Sambung:</b>
@@ -924,40 +934,21 @@ $("search").addEventListener("click",async()=>{
 
     let all = direct.slice(0,10);
 
-    /* JIKA TIADA LALUAN TERUS, CARI PERTUKARAN */
+    
+/* CARI PERTUKARAN ANTARA BAS DAN TREN */
 
-    if(!all.length){
+if(!all.length){
 
-      for(const data of datasets){
+  transfers = searchTransferAcrossDatasets(
+    datasets,
+    from,
+    to,
+    date,
+    requestedTime
+  );
 
-        const starts = findStops(data,from);
-        const ends = findStops(data,to);
-
-        for(const start of starts){
-
-          for(const end of ends){
-
-            transfers.push(
-              ...searchTransfer(
-                data,
-                start,
-                end,
-                date,
-                requestedTime
-              )
-            );
-
-            if(transfers.length >= 10) break;
-          }
-
-          if(transfers.length >= 10) break;
-        }
-
-        if(transfers.length >= 10) break;
-      }
-
-      all = transfers.slice(0,10);
-    }
+  all = transfers.slice(0,10);
+}
 
     results.innerHTML = all.length
       ? all.map(showResult).join("")
