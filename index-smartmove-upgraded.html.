@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#092b45">
+<title>SMARTMOVE MALAYSIA</title>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;color:#172b3a;font-family:Arial,sans-serif}
+header{background:#092b45;color:white;padding:24px 18px}
+header h1{margin:0;font-size:25px}
+header p{margin:7px 0 0;color:#c8d8e5}
+main{max-width:650px;margin:20px auto;padding:0 14px}
+.card{background:white;padding:18px;border-radius:15px;margin-bottom:15px;box-shadow:0 3px 14px #0000000c}
+label{display:block;font-weight:bold;margin:12px 0 6px}
+input,select,button{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:9px;font-size:16px}
+button{background:#0878b9;color:white;border:0;font-weight:bold;margin-top:16px}
+.result{border-left:4px solid #0878b9;padding:12px;margin:12px 0;background:#f1f8fc;border-radius:7px}
+.small{font-size:13px;color:#64748b;line-height:1.5}
+#status{font-size:13px;color:#526477;margin-top:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>SMARTMOVE MALAYSIA</h1>
+<p>Perancang perjalanan pengangkutan awam</p>
+</header>
+<main>
+<section class="card">
+<h2>Cari perjalanan</h2>
+<label>Dari</label>
+<input id="from" placeholder="Contoh: Pasar Seni">
+<label>Ke</label>
+<input id="to" placeholder="Contoh: Kajang">
+<label>Tarikh perjalanan</label>
+<input id="date" type="date">
+<label>Masa perjalanan</label>
+<input id="time" type="time">
+<button id="search">Cari laluan</button>
+<div id="status">Sedia untuk mencari perjalanan.</div>
+</section>
+<section class="card">
+<h2>Keputusan perjalanan</h2>
+<div id="results">Masukkan lokasi mula dan destinasi untuk mencari laluan.</div>
+</section>
+<section class="card">
+<h3>Maklumat data</h3>
+<p class="small">SMARTMOVE menggunakan data jadual GTFS yang tersedia. Maklumat masa sebenar, tambang, gangguan perkhidmatan dan pertukaran antara operator belum disahkan secara langsung.</p>
+</section>
+</main>
+<script>
+const FEEDS=[
+ {name:"Rapid Rail KL",url:"https://api.data.gov.my/gtfs-static/prasarana?category=rapid-rail-kl"},
+ {name:"Rapid Bus KL",url:"https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-kl"},
+ {name:"MRT Feeder",url:"https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-mrtfeeder"},
+ {name:"KTMB",url:"https://api.data.gov.my/gtfs-static/ktmb"}
+];
+
+let datasets=[];
+
+function parseCSV(text){
+ return Papa.parse(text,{header:true,skipEmptyLines:true}).data;
+}
+
+async function loadFeed(feed){
+ const response=await fetch(feed.url);
+ if(!response.ok) throw new Error("Gagal memuat turun "+feed.name);
+ const zip=await JSZip.loadAsync(await response.arrayBuffer());
+ const get=async(name)=>{
+  const file=Object.values(zip.files).find(f=>!f.dir&&f.name.split("/").pop()===name);
+  return file?parseCSV(await file.async("text")):[];
+ };
+ const [stops,routes,trips,stopTimes,calendar,exceptions]=await Promise.all([
+  get("stops.txt"),get("routes.txt"),get("trips.txt"),
+  get("stop_times.txt"),get("calendar.txt"),get("calendar_dates.txt")
+ ]);
+ return {name:feed.name,stops,routes,trips,stopTimes,calendar,exceptions};
+}
+
+async function loadData(){
+ if(datasets.length)return;
+ const status=document.getElementById("status");
+ status.textContent="Memuat turun data pengangkutan. Sila tunggu...";
+ const loaded=await Promise.allSettled(FEEDS.map(loadFeed));
+ datasets=loaded.filter(x=>x.status==="fulfilled").map(x=>x.value);
+ if(!datasets.length)throw new Error("Data tidak dapat dimuat turun. Semak sambungan internet.");
+ status.textContent=datasets.length+" set data berjaya dimuatkan.";
+}
+
+function norm(s){
+ return String(s||"").toLowerCase().trim();
+}
+
+function findStops(data,query){
+ return data.stops.filter(s=>norm(s.stop_name).includes(norm(query)));
+}
+
+function serviceRuns(data,tripId,date){
+ const trip=data.trips.find(t=>t.trip_id===tripId);
+ if(!trip)return true;
+ const day=["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][new Date(date+"T12:00:00").getDay()];
+ const exception=data.exceptions.find(e=>e.service_id===trip.service_id&&e.date===date.replaceAll("-",""));
+ if(exception)return exception.exception_type==="1";
+ const cal=data.calendar.find(c=>c.service_id===trip.service_id);
+ if(!cal)return true;
+ const d=date.replaceAll("-","");
+ return cal[day]==="1"&&d>=cal.start_date&&d<=cal.end_date;
+}
+
+function getTrips(data,stopId){
+ const ids=new Set(data.stopTimes.filter(x=>x.stop_id===stopId).map(x=>x.trip_id));
+ return data.trips.filter(t=>ids.has(t.trip_id));
+}
+
+function routeName(data,trip){
+ const route=data.routes.find(r=>r.route_id===trip.route_id);
+ return route?(route.route_short_name||route.route_long_name||"Laluan"): "Laluan";
+}
+
+function searchDirect(data,start,end,date){
+ const starts=data.stopTimes.filter(x=>x.stop_id===start.stop_id);
+ const ends=data.stopTimes.filter(x=>x.stop_id===end.stop_id);
+ const output=[];
+ for(const a of starts){
+  const b=ends.find(x=>x.trip_id===a.trip_id&&Number(x.stop_sequence)>Number(a.stop_sequence));
+  if(!b||!serviceRuns(data,a.trip_id,date))continue;
+  const trip=data.trips.find(t=>t.trip_id===a.trip_id);
+  if(trip)output.push({type:"direct",data,trip,a,b});
+ }
+ return output.slice(0,5);
+}
+
+function searchTransfer(data,start,end,date){
+ const first=getTrips(data,start.stop_id);
+ const second=getTrips(data,end.stop_id);
+ const output=[];
+ for(const t1 of first){
+  if(!serviceRuns(data,t1.trip_id,date))continue;
+  const firstTimes=data.stopTimes.filter(x=>x.trip_id===t1.trip_id)
+    .sort((a,b)=>Number(a.stop_sequence)-Number(b.stop_sequence));
+  const boarding=firstTimes.find(x=>x.stop_id===start.stop_id);
+  if(!boarding)continue;
+  const reachable=firstTimes.filter(x=>Number(x.stop_sequence)>Number(boarding.stop_sequence));
+  for(const t2 of second){
+   if(t1.trip_id===t2.trip_id||!serviceRuns(data,t2.trip_id,date))continue;
+   const secondTimes=data.stopTimes.filter(x=>x.trip_id===t2.trip_id)
+    .sort((a,b)=>Number(a.stop_sequence)-Number(b.stop_sequence));
+   const finalStop=secondTimes.find(x=>x.stop_id===end.stop_id);
+   if(!finalStop)continue;
+   for(const mid of reachable){
+    const transfer=secondTimes.find(x=>x.stop_id===mid.stop_id&&Number(x.stop_sequence)<Number(finalStop.stop_sequence));
+    if(transfer){
+     output.push({type:"transfer",data,t1,t2,boarding,mid,transfer,finalStop});
+     break;
+    }
+   }
+   if(output.length>=5)return output;
+  }
+ }
+ return output;
+}
+
+function showResult(item){
+ if(item.type==="direct"){
+  return `<div class="result"><b>Laluan terus</b><p>${item.data.name}</p>
+  <p>${routeName(item.data,item.trip)}</p>
+  <p>Berlepas: ${item.a.departure_time||"-"}</p>
+  <p>Tiba: ${item.b.arrival_time||"-"}</p></div>`;
+ }
+ return `<div class="result"><b>Laluan dengan satu pertukaran</b>
+ <p>${item.data.name}</p>
+ <p>Laluan 1: ${routeName(item.data,item.t1)}</p>
+ <p>Naik: ${item.boarding.departure_time||"-"}</p>
+ <p>Turun untuk pertukaran: ${item.mid.stop_id}</p>
+ <hr>
+ <p>Laluan 2: ${routeName(item.data,item.t2)}</p>
+ <p>Berlepas: ${item.transfer.departure_time||"-"}</p>
+ <p>Tiba: ${item.finalStop.arrival_time||"-"}</p>
+ </div>`;
+}
+
+document.getElementById("search").addEventListener("click",async()=>{
+ const from=document.getElementById("from").value.trim();
+ const to=document.getElementById("to").value.trim();
+ const date=document.getElementById("date").value;
+ const results=document.getElementById("results");
+ const status=document.getElementById("status");
+ if(!from||!to||!date){status.textContent="Sila isi lokasi mula, destinasi dan tarikh.";return;}
+ if(norm(from)===norm(to)){status.textContent="Lokasi mula dan destinasi mestilah berbeza.";return;}
+ results.innerHTML="";
+ try{
+  await loadData();
+  let all=[];
+  for(const data of datasets){
+   const starts=findStops(data,from);
+   const ends=findStops(data,to);
+   for(const s of starts){
+    for(const e of ends){
+     all.push(...searchDirect(data,s,e,date));
+    }
+   }
+  }
+  if(!all.length){
+   for(const data of datasets){
+    const starts=findStops(data,from);
+    const ends=findStops(data,to);
+    for(const s of starts){
+     for(const e of ends){
+      all.push(...searchTransfer(data,s,e,date));
+     }
+    }
+   }
+  }
+  results.innerHTML=all.length?all.map(showResult).join(""):"Tiada laluan ditemui dalam data yang tersedia. Cuba nama stesen atau lokasi lain.";
+  status.textContent="Carian selesai. "+all.length+" pilihan ditemui.";
+ }catch(err){
+  status.textContent=err.message;
+  results.textContent="Tidak dapat memuatkan data. Sila cuba lagi.";
+ }
+});
+
+document.getElementById("date").value=new Date().toLocaleDateString("en-CA");
+document.getElementById("time").value="08:00";
+</script>
+</body>
+</html>
