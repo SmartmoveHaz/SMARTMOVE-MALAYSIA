@@ -603,6 +603,7 @@ function searchDirect(
 
 /* CARI LALUAN SATU PERTUKARAN ANTARA OPERATOR */
 
+
 function searchTransferAcrossDatasets(
   allData,
   from,
@@ -612,7 +613,6 @@ function searchTransferAcrossDatasets(
 ){
 
   const output = [];
-
   const starts = [];
   const ends = [];
 
@@ -632,7 +632,8 @@ function searchTransferAcrossDatasets(
     const data1 = first.data;
     const start = first.stop;
 
-    for(const firstTripId of (data1.tripsByStop.get(start.stop_id) || [])){
+    for(const firstTripId of
+      (data1.tripsByStop.get(start.stop_id) || [])){
 
       if(!serviceRuns(data1,firstTripId,date)) continue;
 
@@ -662,12 +663,18 @@ function searchTransferAcrossDatasets(
         if(!firstMidStop) continue;
 
         const midName = norm(firstMidStop.stop_name);
-
         if(!midName) continue;
 
-        for(const second of allData){
+        const arrival = timeToMinutes(
+          mid.arrival_time || mid.departure_time
+        );
 
-          const data2 = second;
+        if(arrival === null) continue;
+
+        for(const data2 of allData){
+
+          // Elakkan pertukaran dalam dataset/operator sama
+          if(data1 === data2) continue;
 
           for(const transferStop of data2.stops){
 
@@ -677,11 +684,6 @@ function searchTransferAcrossDatasets(
               data2.tripsByStop.get(transferStop.stop_id) || [];
 
             for(const secondTripId of secondTripIds){
-
-              if(
-                data1 === data2 &&
-                firstTripId === secondTripId
-              ) continue;
 
               if(!serviceRuns(data2,secondTripId,date)) continue;
 
@@ -696,6 +698,19 @@ function searchTransferAcrossDatasets(
 
               if(transferIndex < 0) continue;
 
+              const transfer = secondRows[transferIndex];
+
+              const nextDeparture = timeToMinutes(
+                transfer.departure_time || transfer.arrival_time
+              );
+
+              if(nextDeparture === null) continue;
+
+              const waitingTime = nextDeparture - arrival;
+
+              // Minimum 3 minit, maksimum 60 minit
+              if(waitingTime < 3 || waitingTime > 60) continue;
+
               const finalIndex = secondRows.findIndex(
                 (row,index) =>
                   index > transferIndex &&
@@ -707,22 +722,7 @@ function searchTransferAcrossDatasets(
 
               if(finalIndex < 0) continue;
 
-              const transfer = secondRows[transferIndex];
               const finalStop = secondRows[finalIndex];
-
-              const arrival = timeToMinutes(
-                mid.arrival_time || mid.departure_time
-              );
-
-              const nextDeparture = timeToMinutes(
-                transfer.departure_time || transfer.arrival_time
-              );
-
-              if(
-                arrival !== null &&
-                nextDeparture !== null &&
-                nextDeparture < arrival
-              ) continue;
 
               output.push({
                 type:"transfer",
@@ -736,9 +736,12 @@ function searchTransferAcrossDatasets(
                 finalStop,
 
                 firstStops:firstRows
-                  .slice(boardingIndex,firstRows.findIndex(
-                    row => row.stop_id === mid.stop_id
-                  )+1)
+                  .slice(
+                    boardingIndex,
+                    firstRows.findIndex(
+                      row => row.stop_id === mid.stop_id
+                    ) + 1
+                  )
                   .map(row => stopLabel(data1,row.stop_id)),
 
                 secondStops:secondRows
@@ -746,7 +749,7 @@ function searchTransferAcrossDatasets(
                   .map(row => stopLabel(data2,row.stop_id))
               });
 
-              if(output.length >= 10) {
+              if(output.length >= 10){
                 return output;
               }
             }
@@ -758,6 +761,7 @@ function searchTransferAcrossDatasets(
 
   return output;
 }
+
 
 
 /* PAPAR KEPUTUSAN LALUAN */
@@ -903,7 +907,8 @@ $("search").addEventListener("click",async()=>{
     let transfers = [];
 
     
-/* CARI SEMUA LALUAN TERUS DAN PERTUKARAN */
+
+/* CARI SEMUA LALUAN TERUS */
 
 for(const data of datasets){
 
@@ -930,39 +935,34 @@ for(const data of datasets){
 /* SUSUN LALUAN TERUS */
 
 direct.sort((a,b) =>
-  timeToMinutes(a.a.departure_time || a.a.arrival_time) -
-  timeToMinutes(b.a.departure_time || b.a.arrival_time)
+  (timeToMinutes(a.a.departure_time || a.a.arrival_time) ?? 0) -
+  (timeToMinutes(b.a.departure_time || b.a.arrival_time) ?? 0)
 );
 
-/* CARI PERTUKARAN WALAUPUN ADA LALUAN TERUS */
+/* UTAMAKAN LALUAN TERUS */
 
-transfers = searchTransferAcrossDatasets(
-  datasets,
-  from,
-  to,
-  date,
-  requestedTime
-);
+let all = [];
 
-/* GABUNGKAN SEMUA KEPUTUSAN */
+if(direct.length > 0){
 
-let all = [...direct, ...transfers];
+  all = direct;
 
-all.sort((a,b) => {
+}else{
 
-  const timeA = a.type === "direct"
-    ? a.a.departure_time || a.a.arrival_time
-    : a.boarding.departure_time || a.boarding.arrival_time;
+  transfers = searchTransferAcrossDatasets(
+    datasets,
+    from,
+    to,
+    date,
+    requestedTime
+  );
 
-  const timeB = b.type === "direct"
-    ? b.a.departure_time || b.a.arrival_time
-    : b.boarding.departure_time || b.boarding.arrival_time;
+  all = transfers;
 
-  return (timeToMinutes(timeA) ?? 0) -
-         (timeToMinutes(timeB) ?? 0);
-});
+}
 
 all = all.slice(0,10);
+
 
 
     results.innerHTML = all.length
