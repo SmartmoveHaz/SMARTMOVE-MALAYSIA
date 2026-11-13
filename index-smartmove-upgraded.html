@@ -970,15 +970,17 @@ all = all.slice(0,10);
       : "Tiada laluan ditemui dalam data yang tersedia untuk carian ini. Cuba nama stesen yang lebih ringkas atau semak tarikh perjalanan.";
 
     
+
 status.textContent =
   "Carian selesai. " + all.length +
-  " pilihan ditemui. Sumber data: " +
+  " pilihan. Padanan stesen: " +
   datasets.map(data =>
-    data.name + " (" +
-    data.stops.length.toLocaleString("ms-MY") +
-    " hentian)"
-  ).join(" | ") +
-  ". Jadual statik, bukan masa nyata.";
+    data.name + " (Mula: " +
+    findStops(data,from).length +
+    ", Destinasi: " +
+    findStops(data,to).length + ")"
+  ).join(" | ");
+
 
   }catch(error){
 
