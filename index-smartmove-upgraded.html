@@ -98,6 +98,20 @@ button:disabled{opacity:.6}
   font-size:12px;
   font-weight:bold;
 }
+#from-suggestions,
+#to-suggestions{
+  background:white;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  margin-top:4px;
+  max-height:220px;
+  overflow-y:auto;
+}
+
+#from-suggestions:empty,
+#to-suggestions:empty{
+  display:none;
+}
 </style>
 </head>
 
@@ -113,15 +127,17 @@ button:disabled{opacity:.6}
 <section class="card">
   <h2>Cari perjalanan</h2>
 
-  <label for="from">Dari — Pilih hentian</label>
-<select id="from">
-  <option value="">Memuatkan senarai hentian...</option>
-</select>
+  <label for="from">Dari</label>
+<input id="from" type="text"
+  placeholder="Taip stesen atau hentian..."
+  autocomplete="off">
+<div id="from-suggestions"></div>
 
-<label for="to">Ke — Pilih hentian</label>
-<select id="to">
-  <option value="">Memuatkan senarai hentian...</option>
-</select>
+<label for="to">Ke</label>
+<input id="to" type="text"
+  placeholder="Taip destinasi..."
+  autocomplete="off">
+<div id="to-suggestions"></div>
 
   <label for="date">Tarikh perjalanan</label>
   <input id="date" type="date">
@@ -378,6 +394,8 @@ async function loadData(){
 
 /* CADANGAN NAMA STESEN */
 
+let stationNames = [];
+
 function populateStationHints(){
 
   const names = new Set();
@@ -390,22 +408,63 @@ function populateStationHints(){
     }
   }
 
-  const options = [...names]
-    .sort((a,b)=>a.localeCompare(b,"ms"))
-    .map(name =>
-      '<option value="' + esc(name) + '">' +
-      esc(name) +
-      '</option>'
-    )
-    .join("");
+  stationNames = [...names].sort((a,b)=>
+    a.localeCompare(b,"ms")
+  );
 
-  $("from").innerHTML =
-    '<option value="">Pilih lokasi mula</option>' +
-    options;
+  setupSuggestions("from","from-suggestions");
+  setupSuggestions("to","to-suggestions");
+}
 
-  $("to").innerHTML =
-    '<option value="">Pilih destinasi</option>' +
-    options;
+function setupSuggestions(inputId,listId){
+
+  const input = $(inputId);
+  const list = $(listId);
+
+  input.addEventListener("input",()=>{
+
+    const query = norm(input.value);
+
+    list.innerHTML = "";
+
+    if(query.length < 2) return;
+
+    const matches = stationNames
+      .filter(name=>norm(name).includes(query))
+      .sort((a,b)=>{
+        const na = norm(a);
+        const nb = norm(b);
+
+        const aStarts = na.startsWith(query);
+        const bStarts = nb.startsWith(query);
+
+        if(aStarts && !bStarts) return -1;
+        if(!aStarts && bStarts) return 1;
+
+        return na.localeCompare(nb,"ms");
+      })
+      .slice(0,8);
+
+    matches.forEach(name=>{
+
+      const option = document.createElement("div");
+
+      option.textContent = name;
+      option.style.padding = "12px";
+      option.style.borderBottom = "1px solid #e2e8f0";
+      option.style.cursor = "pointer";
+
+      option.addEventListener("click",()=>{
+        input.value = name;
+        list.innerHTML = "";
+      });
+
+      list.appendChild(option);
+
+    });
+
+  });
+
 }
 
 /* CARI STESEN */
