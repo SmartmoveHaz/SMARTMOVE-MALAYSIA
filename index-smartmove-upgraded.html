@@ -9,7 +9,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root{
   --navy:#092b45;
@@ -111,6 +112,14 @@ button:disabled{opacity:.6}
 #from-suggestions:empty,
 #to-suggestions:empty{
   display:none;
+}
+.route-map{
+  width:100%;
+  height:300px;
+  margin-top:12px;
+  border-radius:12px;
+  border:1px solid #cbd5e1;
+  z-index:1;
 }
 </style>
 </head>
