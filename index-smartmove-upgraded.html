@@ -999,7 +999,13 @@ function renderRouteMap(item,index){
     "route-map-" + index
   );
 
-  if(!mapElement || !window.L) return;
+  if(!mapElement) return;
+
+if(!window.L){
+  mapElement.textContent =
+    "Leaflet gagal dimuatkan. Semak sambungan internet dan cuba muat semula.";
+  return;
+}
 
   const rows = getStopSequence(
     item.data,
