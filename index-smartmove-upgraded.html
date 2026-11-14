@@ -307,15 +307,63 @@ button:disabled {
 .small {
   color: #647C80;
 }
+/* ===== SMARTMOVE BRAND HEADER ===== */
 
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-mark {
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #DDF8F3;
+  border: 2px solid #5CE8DC;
+  border-radius: 18px;
+  font-size: 30px;
+  box-shadow: 0 4px 15px #00000025;
+}
+
+.brand-lockup h1 {
+  margin: 0;
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.brand-lockup p {
+  margin: 5px 0 0;
+  color: #8FE8DE;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.brand-tagline {
+  margin-top: 17px;
+  color: #D0E9E9;
+  font-size: 14px;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>SMARTMOVE MALAYSIA</h1>
-  <p>Perancang perjalanan pengangkutan awam</p>
+  <div class="brand-lockup">
+    <div class="brand-mark">🚆</div>
+    <div>
+      <h1>SMARTMOVE</h1>
+      <p>MALAYSIA · PUBLIC TRANSIT</p>
+    </div>
+  </div>
+  <div class="brand-tagline">
+    Perjalanan lebih mudah, ke mana sahaja.
+  </div>
 </header>
 
 <main>
