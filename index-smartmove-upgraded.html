@@ -991,7 +991,83 @@ function showResult(item,index){
     </article>
   `;
 }
+/* PAPAR PETA LALUAN */
 
+function renderRouteMap(item,index){
+
+  const mapElement = document.getElementById(
+    "route-map-" + index
+  );
+
+  if(!mapElement || !window.L) return;
+
+  const rows = getStopSequence(
+    item.data,
+    item.trip.trip_id
+  );
+
+  const startIndex = rows.findIndex(
+    row => row.stop_id === item.a.stop_id
+  );
+
+  const endIndex = rows.findIndex(
+    (row,i) =>
+      i > startIndex &&
+      row.stop_id === item.b.stop_id
+  );
+
+  if(startIndex < 0 || endIndex < 0) return;
+
+  const points = rows
+    .slice(startIndex,endIndex+1)
+    .map(row => item.data.stopById.get(row.stop_id))
+    .filter(stop =>
+      stop &&
+      Number.isFinite(Number(stop.stop_lat)) &&
+      Number.isFinite(Number(stop.stop_lon))
+    );
+
+  if(!points.length){
+    mapElement.textContent =
+      "Koordinat peta tidak tersedia.";
+    return;
+  }
+
+  const map = L.map(mapElement);
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution: "&copy; OpenStreetMap"
+    }
+  ).addTo(map);
+
+  const coordinates = points.map(stop => [
+    Number(stop.stop_lat),
+    Number(stop.stop_lon)
+  ]);
+
+  L.polyline(coordinates,{
+    color:"#2563eb",
+    weight:5
+  }).addTo(map);
+
+  points.forEach((stop,i)=>{
+    L.marker([
+      Number(stop.stop_lat),
+      Number(stop.stop_lon)
+    ])
+    .addTo(map)
+    .bindPopup(
+      (i===0 ? "Mula: " : "") +
+      esc(stop.stop_name || "Hentian")
+    );
+  });
+
+  map.fitBounds(coordinates,{
+    padding:[25,25]
+  });
+}
 /* PROSES CARIAN */
 
 $("search").addEventListener("click",async()=>{
