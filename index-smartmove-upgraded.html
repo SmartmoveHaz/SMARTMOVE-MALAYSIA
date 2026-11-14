@@ -1867,7 +1867,7 @@ all = all.slice(0,10);
 
     results.innerHTML = all.length
   ? all.map((item,index)=>showResult(item,index)).join("")
-      : "Tiada laluan ditemui dalam data yang tersedia untuk carian ini. Cuba nama stesen yang lebih ringkas atau semak tarikh perjalanan.";
+      : routeText("noRoutes");
 if(all.length){
   all.forEach((item,index)=>{
     if(item.type === "direct"){
@@ -1915,7 +1915,7 @@ if(all.length){
   }finally{
 
     button.disabled = false;
-    button.textContent = "Cari laluan";
+    button.textContent = translations[languageSelect.value].search;
   }
 
 });
