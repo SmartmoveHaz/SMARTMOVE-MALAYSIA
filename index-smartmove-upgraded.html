@@ -533,6 +533,7 @@ function stopsBetween(data,tripId,startId,endId){
 
 /* CARI LALUAN TERUS */
 
+
 function searchDirect(
   data,
   start,
@@ -541,58 +542,112 @@ function searchDirect(
   requestedTime
 ){
 
-  const startRows = data.stopTimes.filter(
-    row => row.stop_id === start.stop_id
-  );
-
   const output = [];
 
-  for(const a of startRows){
+  const toSeconds = value => {
+    if(!value) return null;
+    const p = value.split(":").map(Number);
+    if(p.length !== 3 || p.some(Number.isNaN)) return null;
+    return p[0]*3600 + p[1]*60 + p[2];
+  };
 
-    if(!serviceRuns(data,a.trip_id,date)){
-      continue;
-    }
+  const toClock = seconds => {
+    const h = Math.floor(seconds/3600);
+    const m = Math.floor((seconds%3600)/60);
+    const s = seconds%60;
+    return [h,m,s].map(v=>String(v).padStart(2,"0")).join(":");
+  };
 
-    const b = data.stopTimes.find(
-      row =>
-        row.trip_id === a.trip_id &&
-        row.stop_id === end.stop_id &&
-        Number(row.stop_sequence) >
-        Number(a.stop_sequence)
+  const frequencyTrips = new Set(
+    (data.frequencies || []).map(row=>row.trip_id)
+  );
+
+  for(const [tripId,rows] of data.timesByTrip){
+
+    if(!serviceRuns(data,tripId,date)) continue;
+
+    const a = rows.find(row=>row.stop_id===start.stop_id);
+    const b = rows.find(row=>
+      row.stop_id===end.stop_id &&
+      Number(row.stop_sequence)>Number(a?.stop_sequence)
     );
 
-    if(!b) continue;
+    if(!a || !b) continue;
 
-    const trip = data.tripById.get(a.trip_id);
-
+    const trip = data.tripById.get(tripId);
     if(!trip) continue;
 
-    const departure = timeToMinutes(
-      a.departure_time || a.arrival_time
+    const baseStart = toSeconds(
+      rows[0].departure_time || rows[0].arrival_time
     );
 
-    if(
-      requestedTime !== null &&
-      departure !== null &&
-      departure < requestedTime
-    ){
-      continue;
+    const baseA = toSeconds(a.departure_time || a.arrival_time);
+    const baseB = toSeconds(b.arrival_time || b.departure_time);
+
+    if(baseStart===null || baseA===null || baseB===null) continue;
+
+    const frequencies = (data.frequencies || [])
+      .filter(row=>row.trip_id===tripId);
+
+    const departures = [];
+
+    if(frequencies.length){
+
+      for(const f of frequencies){
+
+        const first = toSeconds(f.start_time);
+        const last = toSeconds(f.end_time);
+        const headway = Number(f.headway_secs);
+
+        if(first===null || last===null || headway<=0) continue;
+
+        for(let t=first;t<=last;t+=headway){
+          const shift=t-baseStart;
+          departures.push({
+            aTime:toClock(baseA+shift),
+            bTime:toClock(baseB+shift)
+          });
+        }
+      }
+
+    }else{
+
+      departures.push({
+        aTime:a.departure_time || a.arrival_time,
+        bTime:b.arrival_time || b.departure_time
+      });
+
     }
 
-    output.push({
-      type:"direct",
-      data,
-      trip,
-      a,
-      b,
-      stationList:stopsBetween(
+    for(const departure of departures){
+
+      const minutes=timeToMinutes(departure.aTime);
+
+      if(
+        requestedTime!==null &&
+        minutes!==null &&
+        minutes<requestedTime
+      ) continue;
+
+      output.push({
+        type:"direct",
         data,
-        a.trip_id,
-        start.stop_id,
-        end.stop_id
-      )
-    });
+        trip,
+        a:{...a,departure_time:departure.aTime},
+        b:{...b,arrival_time:departure.bTime},
+        stationList:stopsBetween(
+          data,tripId,start.stop_id,end.stop_id
+        )
+      });
+    }
   }
+
+  return output.sort((x,y)=>
+    timeToMinutes(x.a.departure_time)-
+    timeToMinutes(y.a.departure_time)
+  ).slice(0,10);
+}
+
 
   return output
     .sort(
