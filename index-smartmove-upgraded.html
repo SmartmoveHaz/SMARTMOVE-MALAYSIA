@@ -541,6 +541,7 @@ const FEEDS = [
 
 let datasets = [];
 let loadingPromise = null;
+let lastSearchResults = null;
 
 const $ = id => document.getElementById(id);
 
@@ -630,7 +631,9 @@ function applyLanguage(language) {
   if (!$("status").dataset.loading) {
     $("status").textContent = t.ready;
   }
-
+if (lastSearchResults !== null) {
+  renderSearchResults();
+}
   document.documentElement.lang = language;
   localStorage.setItem("smartmove-language", language);
 }
@@ -1735,7 +1738,39 @@ function renderTransferMap(data,trip,startStop,endStop,mapId){
 
   map.fitBounds(coordinates,{padding:[25,25]});
 }
+function renderSearchResults() {
+  const results = $("results");
 
+  results.innerHTML = lastSearchResults.length
+    ? lastSearchResults.map((item,index) =>
+        showResult(item,index)
+      ).join("")
+    : routeText("noRoutes");
+
+  if (lastSearchResults.length) {
+    lastSearchResults.forEach((item,index) => {
+      if (item.type === "direct") {
+        renderRouteMap(item,index);
+      } else if (item.type === "transfer") {
+        renderTransferMap(
+          item.data,
+          item.t1,
+          item.boarding,
+          item.mid,
+          "transfer-map-1-" + index
+        );
+
+        renderTransferMap(
+          item.data2,
+          item.t2,
+          item.transfer,
+          item.finalStop,
+          "transfer-map-2-" + index
+        );
+      }
+    });
+  }
+}
 const selectedTransportModes = new Set(["bus", "lrt", "mrt"]);
 
 document.querySelectorAll(".transport-option").forEach(button => {
