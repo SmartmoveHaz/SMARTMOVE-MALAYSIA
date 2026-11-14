@@ -135,6 +135,30 @@ button:disabled{opacity:.6}
 
 <section class="card">
   <h2>Cari perjalanan</h2>
+  
+<div class="transport-selector">
+  <p><b>Pilih jenis pengangkutan</b></p>
+
+  <div class="transport-options">
+    <button type="button" class="transport-option active" data-mode="bus" aria-pressed="true">
+      <span>🚌</span>
+      <small>BAS</small>
+    </button>
+
+    <button type="button" class="transport-option active" data-mode="lrt" aria-pressed="true">
+      <span>🚈</span>
+      <small>LRT</small>
+    </button>
+
+    <button type="button" class="transport-option active" data-mode="mrt" aria-pressed="true">
+      <span>🚇</span>
+      <small>MRT</small>
+    </button>
+  </div>
+
+  <small class="transport-hint">Boleh pilih lebih daripada satu jenis.</small>
+</div>
+
 
   <label for="from">Dari</label>
 <input id="from" type="text"
