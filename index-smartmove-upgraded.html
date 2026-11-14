@@ -169,6 +169,45 @@ button:disabled{opacity:.6}
   transform: scale(0.96);
 }
 
+/* ===== ANIMASI IKON PENGANGKUTAN ===== */
+
+.transport-option span {
+  display: inline-block;
+}
+
+.transport-option.active[data-mode="bus"] span {
+  animation: busMove 1.2s ease-in-out infinite;
+}
+
+.transport-option.active[data-mode="lrt"] span {
+  animation: lrtMove 1.5s ease-in-out infinite;
+}
+
+.transport-option.active[data-mode="mrt"] span {
+  animation: mrtMove 1s ease-in-out infinite;
+}
+
+@keyframes busMove {
+  0%, 100% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+}
+
+@keyframes lrtMove {
+  0%, 100% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+}
+
+@keyframes mrtMove {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transport-option span {
+    animation: none !important;
+  }
+}
+
 .transport-hint {
   display: block;
   margin-top: 10px;
