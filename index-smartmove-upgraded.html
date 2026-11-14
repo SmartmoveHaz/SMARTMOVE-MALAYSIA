@@ -1059,16 +1059,37 @@ if(!window.L){
   }).addTo(map);
 
   points.forEach((stop,i)=>{
-    L.marker([
-      Number(stop.stop_lat),
-      Number(stop.stop_lon)
-    ])
-    .addTo(map)
-    .bindPopup(
-      (i===0 ? "Mula: " : "") +
-      esc(stop.stop_name || "Hentian")
-    );
-  });
+
+  let markerColor = "#2563eb";
+  let label = "Hentian";
+
+  if(i === 0){
+    markerColor = "#16a34a";
+    label = "Mula";
+  }
+
+  if(i === points.length - 1){
+    markerColor = "#dc2626";
+    label = "Destinasi";
+  }
+
+  L.circleMarker([
+    Number(stop.stop_lat),
+    Number(stop.stop_lon)
+  ],{
+    radius:8,
+    color:"#ffffff",
+    weight:2,
+    fillColor:markerColor,
+    fillOpacity:1
+  })
+  .addTo(map)
+  .bindPopup(
+    "<b>" + label + "</b><br>" +
+    esc(stop.stop_name || "Hentian")
+  );
+
+});
 
   map.fitBounds(coordinates,{
     padding:[25,25]
