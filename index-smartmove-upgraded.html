@@ -326,21 +326,7 @@ button:disabled {
   border-radius: 18px;
   font-size: 30px;
   box-shadow: 0 4px 15px #00000025;
-  animation: smartMoveFloat 3s ease-in-out infinite;
   transition: transform 0.3s ease;
-}
-
-.brand-mark:hover {
-  transform: scale(1.12);
-}
-
-@keyframes smartMoveFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -362,6 +348,34 @@ button:disabled {
   color: #D0E9E9;
   font-size: 14px;
 }
+/* ANIMASI KERETA API */
+
+.brand-mark {
+  overflow: hidden;
+}
+
+.train-icon {
+  display: inline-block;
+  animation: trainTravel 2.5s ease-in-out infinite;
+}
+
+@keyframes trainTravel {
+  0% {
+    transform: translateX(-8px);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+  100% {
+    transform: translateX(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .train-icon {
+    animation: none;
+  }
+}
 </style>
 </head>
 
@@ -369,7 +383,9 @@ button:disabled {
 
 <header>
   <div class="brand-lockup">
-    <div class="brand-mark">🚆</div>
+    <div class="brand-mark">
+  <span class="train-icon">🚆</span>
+</div>
     <div>
       <h1>SMARTMOVE</h1>
       <p>MALAYSIA · PUBLIC TRANSIT</p>
