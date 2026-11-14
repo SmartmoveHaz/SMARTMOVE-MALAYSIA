@@ -121,6 +121,60 @@ button:disabled{opacity:.6}
   border:1px solid #cbd5e1;
   z-index:1;
 }
+
+.transport-selector {
+  margin: 15px 0 20px;
+  padding: 15px;
+  background: #f1f5f9;
+  border-radius: 14px;
+}
+
+.transport-options {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.transport-option {
+  flex: 1;
+  padding: 14px 8px;
+  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  background: white;
+  color: #334155;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+
+.transport-option span {
+  font-size: 28px;
+}
+
+.transport-option small {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.transport-option.active {
+  background: #dbeafe;
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+
+.transport-option:active {
+  transform: scale(0.96);
+}
+
+.transport-hint {
+  display: block;
+  margin-top: 10px;
+  color: #64748b;
+}
+
 </style>
 </head>
 
