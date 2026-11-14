@@ -1129,7 +1129,10 @@ status.textContent =
 /* TARIKH HARI INI */
 
 $("date").value = new Date().toLocaleDateString("en-CA");
-
+loadData().catch(error=>{
+  $("status").textContent =
+    "Gagal memuatkan senarai hentian: " + error.message;
+});
 </script>
 </body>
 </html>
