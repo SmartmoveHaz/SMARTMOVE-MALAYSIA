@@ -326,9 +326,6 @@ button:disabled {
   border-radius: 18px;
   font-size: 30px;
   box-shadow: 0 4px 15px #00000025;
-  /* ANIMASI LOGO SMARTMOVE */
-
-.brand-mark {
   animation: smartMoveFloat 3s ease-in-out infinite;
   transition: transform 0.3s ease;
 }
@@ -346,19 +343,11 @@ button:disabled {
   }
 }
 
-/* Kurangkan animasi jika pengguna memilih reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .brand-mark {
     animation: none;
   }
 }
-}
-
-.brand-lockup h1 {
-  margin: 0;
-  font-size: 27px;
-  font-weight: 800;
-  letter-spacing: 2px;
 }
 
 .brand-lockup p {
