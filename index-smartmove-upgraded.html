@@ -659,6 +659,10 @@ const routeTranslations = {
     secondJourney: "Perjalanan kedua",
     minutes: "minit",
     noRoutes: "Tiada laluan ditemui dalam data yang tersedia. Cuba nama stesen yang lebih ringkas atau semak tarikh perjalanan."
+    required: "Sila isi lokasi mula, destinasi dan tarikh.",
+different: "Lokasi mula dan destinasi mestilah berbeza.",
+searching: "Sedang mencari...",
+searchingRoutes: "Sedang mencari laluan dalam jadual yang tersedia..."
   },
   en: {
     direct: "✓ Direct route",
@@ -680,7 +684,10 @@ const routeTranslations = {
     firstJourney: "First journey",
     secondJourney: "Second journey",
     minutes: "minutes",
-    noRoutes: "No routes found in the available data. Try a shorter station name or check the travel date."
+    noRoutes: required: "Please enter a starting point, destination and date.",
+different: "The starting point and destination must be different.",
+searching: "Searching...",
+searchingRoutes: "Searching available journey schedules...""No routes found in the available data. Try a shorter station name or check the travel date."
   }
 };
 
@@ -1483,13 +1490,13 @@ function showResult(item,index){
     <article class="result">
 
       <div class="result-title">
-        ↔ Laluan dengan satu pertukaran
-      </div>
+  ${routeText("transfer")}
+</div>
 
-      <div><b>Peta perjalanan pertama</b></div>
+      <div><b>${routeText("firstMap")}</b></div>
       <div class="route-map" id="transfer-map-1-${index}"></div>
 
-      <div><b>Peta perjalanan kedua</b></div>
+      <div><b>${routeText("secondMap")}</b></div>
       <div class="route-map" id="transfer-map-2-${index}"></div>
 
       <p>
@@ -1497,55 +1504,55 @@ function showResult(item,index){
         <span class="pill">${esc(item.data2.name)}</span>
       </p>
 
-      <p><b>Laluan 1:</b>
-        ${esc(routeName(item.data,item.t1))}
-      </p>
+      <p><b>${routeText("route")} 1:</b>
+  ${esc(routeName(item.data,item.t1))}
+</p>
 
-      <p><b>Berlepas:</b>
-        ${esc(item.boarding.departure_time || item.boarding.arrival_time || "-")}
-      </p>
+<p><b>${routeText("departure")}:</b>
+  ${esc(item.boarding.departure_time || item.boarding.arrival_time || "-")}
+</p>
 
-      <p><b>Tempat pertukaran:</b>
-        ${esc(stopLabel(item.data,item.mid.stop_id))}
-      </p>
+<p><b>${routeText("transferPlace")}:</b>
+  ${esc(stopLabel(item.data,item.mid.stop_id))}
+</p>
 
-      <p><b>Tiba di tempat pertukaran:</b>
-        ${esc(transferArrival)}
-      </p>
+<p><b>${routeText("transferArrival")}:</b>
+  ${esc(transferArrival)}
+</p>
 
-      <p><b>Laluan 2:</b>
-        ${esc(routeName(item.data2,item.t2))}
-      </p>
+<p><b>${routeText("route")} 2:</b>
+  ${esc(routeName(item.data2,item.t2))}
+</p>
 
-      <p><b>Sambung perjalanan:</b>
-        ${esc(transferDeparture)}
-      </p>
+<p><b>${routeText("continueJourney")}:</b>
+  ${esc(transferDeparture)}
+</p>
 
-      <p><b>Tempoh menunggu:</b>
-        ${waitingMinutes} minit
-      </p>
+<p><b>${routeText("waiting")}:</b>
+  ${waitingMinutes} ${routeText("minutes")}
+</p>
 
-      <p><b>Tiba destinasi:</b>
-        ${esc(item.finalStop.arrival_time || item.finalStop.departure_time || "-")}
-      </p>
+<p><b>${routeText("destinationArrival")}:</b>
+  ${esc(item.finalStop.arrival_time || item.finalStop.departure_time || "-")}
+</p>
 
-      <details>
-        <summary>Lihat hentian perjalanan</summary>
+<details>
+  <summary>${routeText("viewStops")}</summary>
 
-        <p><b>Perjalanan pertama</b></p>
-        <ol class="stops">
-          ${(item.firstStops || [])
-            .map(name=>'<li>'+esc(name)+'</li>')
-            .join("")}
-        </ol>
+  <p><b>${routeText("firstJourney")}</b></p>
+  <ol class="stops">
+    ${(item.firstStops || [])
+      .map(name=>'<li>'+esc(name)+'</li>')
+      .join("")}
+  </ol>
 
-        <p><b>Perjalanan kedua</b></p>
-        <ol class="stops">
-          ${(item.secondStops || [])
-            .map(name=>'<li>'+esc(name)+'</li>')
-            .join("")}
-        </ol>
-      </details>
+  <p><b>${routeText("secondJourney")}</b></p>
+  <ol class="stops">
+    ${(item.secondStops || [])
+      .map(name=>'<li>'+esc(name)+'</li>')
+      .join("")}
+  </ol>
+</details>
 
     </article>
   `;
@@ -1762,21 +1769,20 @@ $("search").addEventListener("click",async()=>{
 
   if(!from || !to || !date){
     status.textContent =
-      "Sila isi lokasi mula, destinasi dan tarikh.";
+      routeText("required");
     return;
   }
 
   if(norm(from) === norm(to)){
     status.textContent =
-      "Lokasi mula dan destinasi mestilah berbeza.";
+      routeText("different");
     return;
   }
 
   button.disabled = true;
-  button.textContent = "Sedang mencari...";
+  button.textContent = routeText("searching");
 
-  results.textContent =
-    "Sedang mencari laluan dalam jadual yang tersedia...";
+  results.textContent = routeText("searchingRoutes");
 
   try{
 
