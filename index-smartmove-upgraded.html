@@ -640,6 +640,7 @@ if (lastSearchResults !== null) {
 
 /* ===== TERJEMAHAN KEPUTUSAN LALUAN ===== */
 
+
 const routeTranslations = {
   ms: {
     direct: "✓ Laluan terus",
@@ -661,12 +662,13 @@ const routeTranslations = {
     firstJourney: "Perjalanan pertama",
     secondJourney: "Perjalanan kedua",
     minutes: "minit",
-    noRoutes: "Tiada laluan ditemui dalam data yang tersedia. Cuba nama stesen yang lebih ringkas atau semak tarikh perjalanan."
+    noRoutes: "Tiada laluan ditemui dalam data yang tersedia. Cuba nama stesen yang lebih ringkas atau semak tarikh perjalanan.",
     required: "Sila isi lokasi mula, destinasi dan tarikh.",
-different: "Lokasi mula dan destinasi mestilah berbeza.",
-searching: "Sedang mencari...",
-searchingRoutes: "Sedang mencari laluan dalam jadual yang tersedia..."
+    different: "Lokasi mula dan destinasi mestilah berbeza.",
+    searching: "Sedang mencari...",
+    searchingRoutes: "Sedang mencari laluan dalam jadual yang tersedia..."
   },
+
   en: {
     direct: "✓ Direct route",
     transfer: "↔ Route with one transfer",
@@ -687,11 +689,14 @@ searchingRoutes: "Sedang mencari laluan dalam jadual yang tersedia..."
     firstJourney: "First journey",
     secondJourney: "Second journey",
     minutes: "minutes",
-    noRoutes: required: "Please enter a starting point, destination and date.",
-different: "The starting point and destination must be different.",
-searching: "Searching...",
-searchingRoutes: "Searching available journey schedules...""No routes found in the available data. Try a shorter station name or check the travel date."
+    noRoutes: "No routes found in the available data. Try a shorter station name or check the travel date.",
+    required: "Please enter a starting point, destination and date.",
+    different: "The starting point and destination must be different.",
+    searching: "Searching...",
+    searchingRoutes: "Searching available journey schedules..."
   }
+};
+
 };
 
 function routeText(key) {
