@@ -1096,71 +1096,7 @@ all = all.slice(0,10);
     
 
 
-const railData = datasets.find(
-  data => data.name === "Rapid Rail KL"
-);
 
-let railReport = [];
-
-if(railData){
-
-  const railStarts = findStops(railData,from);
-  const railEnds = findStops(railData,to);
-
-  let matched = [];
-  let activeCount = 0;
-
-  for(const start of railStarts){
-    for(const end of railEnds){
-
-      for(const [tripId,rows] of railData.timesByTrip){
-
-        const a = rows.find(
-          row => row.stop_id === start.stop_id
-        );
-
-        if(!a) continue;
-
-        const b = rows.find(
-          row =>
-            row.stop_id === end.stop_id &&
-            Number(row.stop_sequence) >
-            Number(a.stop_sequence)
-        );
-
-        if(!b) continue;
-
-        const active = serviceRuns(
-          railData,tripId,date
-        );
-
-        if(active) activeCount++;
-
-        matched.push(
-          start.stop_name + " → " +
-          end.stop_name + " | " +
-          (a.departure_time || a.arrival_time) +
-          " → " +
-          (b.arrival_time || b.departure_time) +
-          " | Aktif: " + active
-        );
-      }
-    }
-  }
-
-  railReport = [
-    "Stesen mula ditemui: " + railStarts.length,
-    "Stesen destinasi ditemui: " + railEnds.length,
-    "Trip sehala ditemui: " + matched.length,
-    "Trip aktif: " + activeCount,
-    "Rekod frequencies: " + railData.frequencies.length,
-    ...matched.slice(0,10)
-  ];
-}
-
-status.textContent =
-  "SEMAKAN DATA LRT\n" +
-  railReport.join("\n");
 
 
 
