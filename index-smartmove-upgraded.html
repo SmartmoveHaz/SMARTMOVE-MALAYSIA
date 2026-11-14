@@ -1259,27 +1259,22 @@ preferredDirect.sort((a,b) =>
   (timeToMinutes(b.a.departure_time || b.a.arrival_time) ?? 0)
 );
 
-/* PILIH LALUAN TERBAIK */
+/* CARI LALUAN TERUS DAN PERTUKARAN */
 
-let all = [];
+transfers = searchTransferAcrossDatasets(
+  datasets,
+  from,
+  to,
+  date,
+  requestedTime
+);
 
-if(preferredDirect.length > 0){
+/* GABUNGKAN KEDUA-DUA JENIS LALUAN */
 
-  all = preferredDirect;
-
-}else{
-
-  transfers = searchTransferAcrossDatasets(
-    datasets,
-    from,
-    to,
-    date,
-    requestedTime
-  );
-
-  all = transfers;
-
-}
+let all = [
+  ...preferredDirect.slice(0,5),
+  ...transfers.slice(0,5)
+];
 
 all = all.slice(0,10);
 
