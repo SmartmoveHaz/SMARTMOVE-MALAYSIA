@@ -1085,7 +1085,40 @@ function isTransportSelected(data, trip){
     getTransportMode(data, trip)
   );
 }
+/* ===== LABEL OPERATOR DAN PENGANGKUTAN ===== */
 
+function getOperatorLabel(data) {
+  if (
+    data.name === "Rapid Rail KL" ||
+    data.name === "Rapid Bus KL" ||
+    data.name === "MRT Feeder"
+  ) {
+    return "RAPID KL";
+  }
+
+  if (data.name === "KTMB") {
+    return "KTMB";
+  }
+
+  return data.name;
+}
+
+function getTransportLabel(data, trip) {
+  const mode = getTransportMode(data, trip);
+
+  if (mode === "lrt") return "LRT";
+  if (mode === "mrt") return "MRT";
+
+  if (mode === "bus") {
+    return data.name === "MRT Feeder"
+      ? "MRT FEEDER"
+      : "BAS";
+  }
+
+  if (data.name === "KTMB") return "KTM KOMUTER";
+
+  return "PENGANGKUTAN";
+}
 /* TUKAR MASA KEPADA MINIT */
 
 function timeToMinutes(value){
@@ -1449,6 +1482,13 @@ function showResult(item,index){
     return `
       <article class="result">
         <div class="result-title">${routeText("direct")}</div>
+
+<p>
+  <span class="pill">${esc(getOperatorLabel(item.data))}</span>
+  <span class="pill">${esc(getTransportLabel(item.data,item.trip))}</span>
+  <span class="pill">${esc(routeName(item.data,item.trip))}</span>
+</p>
+
 <div class="route-map" id="route-map-${index}"></div>
 
 <div style="display:flex; gap:16px; flex-wrap:wrap; margin:10px 0; font-size:13px;">
@@ -1502,10 +1542,19 @@ function showResult(item,index){
       <div><b>${routeText("secondMap")}</b></div>
       <div class="route-map" id="transfer-map-2-${index}"></div>
 
-      <p>
-        <span class="pill">${esc(item.data.name)}</span>
-        <span class="pill">${esc(item.data2.name)}</span>
-      </p>
+      <p><b>${routeText("firstJourney")}</b></p>
+<p>
+  <span class="pill">${esc(getOperatorLabel(item.data))}</span>
+  <span class="pill">${esc(getTransportLabel(item.data,item.t1))}</span>
+  <span class="pill">${esc(routeName(item.data,item.t1))}</span>
+</p>
+
+<p><b>${routeText("secondJourney")}</b></p>
+<p>
+  <span class="pill">${esc(getOperatorLabel(item.data2))}</span>
+  <span class="pill">${esc(getTransportLabel(item.data2,item.t2))}</span>
+  <span class="pill">${esc(routeName(item.data2,item.t2))}</span>
+</p>
 
       <p><b>${routeText("route")} 1:</b>
   ${esc(routeName(item.data,item.t1))}
