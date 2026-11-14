@@ -629,6 +629,46 @@ function routeName(data,trip){
     : "Laluan";
 }
 
+function getTransportMode(data, trip){
+
+  if(
+    data.name === "Rapid Bus KL" ||
+    data.name === "MRT Feeder"
+  ){
+    return "bus";
+  }
+
+  if(data.name !== "Rapid Rail KL"){
+    return null;
+  }
+
+  const route = data.routeById.get(trip?.route_id);
+
+  if(!route) return null;
+
+  const routeText = norm(
+    (route.route_short_name || "") + " " +
+    (route.route_long_name || "") + " " +
+    (route.route_desc || "")
+  );
+
+  if(/\bmrt\b|kajang|putrajaya/.test(routeText)){
+    return "mrt";
+  }
+
+  if(/\blrt\b|kelana jaya|ampang|sri petaling/.test(routeText)){
+    return "lrt";
+  }
+
+  return null;
+}
+
+function isTransportSelected(data, trip){
+  return selectedTransportModes.has(
+    getTransportMode(data, trip)
+  );
+}
+
 /* TUKAR MASA KEPADA MINIT */
 
 function timeToMinutes(value){
@@ -730,6 +770,7 @@ function searchDirect(
 
     const trip = data.tripById.get(tripId);
     if(!trip) continue;
+    if(!isTransportSelected(data,trip)) continue;
 
     const baseStart = toSeconds(
       rows[0].departure_time || rows[0].arrival_time
@@ -842,6 +883,9 @@ function searchTransferAcrossDatasets(
 
       if(!serviceRuns(data1,firstTripId,date)) continue;
 
+      const firstTrip = data1.tripById.get(firstTripId);
+      if(!firstTrip || !isTransportSelected(data1,firstTrip)) continue;
+      
       const firstRows = getStopSequence(data1,firstTripId);
 
       const boardingIndex = firstRows.findIndex(
@@ -889,6 +933,9 @@ function searchTransferAcrossDatasets(
             for(const secondTripId of secondTripIds){
 
               if(!serviceRuns(data2,secondTripId,date)) continue;
+
+               const secondTrip = data2.tripById.get(secondTripId);
+               if(!secondTrip || !isTransportSelected(data2,secondTrip)) continue;
 
               const secondRows = getStopSequence(
                 data2,
@@ -1276,6 +1323,25 @@ function renderTransferMap(data,trip,startStop,endStop,mapId){
 
   map.fitBounds(coordinates,{padding:[25,25]});
 }
+
+const selectedTransportModes = new Set(["bus", "lrt", "mrt"]);
+
+document.querySelectorAll(".transport-option").forEach(button => {
+  button.addEventListener("click", () => {
+    const mode = button.dataset.mode;
+
+    if (selectedTransportModes.has(mode)) {
+      selectedTransportModes.delete(mode);
+      button.classList.remove("active");
+      button.setAttribute("aria-pressed", "false");
+    } else {
+      selectedTransportModes.add(mode);
+      button.classList.add("active");
+      button.setAttribute("aria-pressed", "true");
+    }
+  });
+});
+
 /* PROSES CARIAN */
 
 $("search").addEventListener("click",async()=>{
