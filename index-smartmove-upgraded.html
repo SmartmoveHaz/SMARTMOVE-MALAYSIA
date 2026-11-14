@@ -1266,10 +1266,16 @@ transfers = searchTransferAcrossDatasets(
   date,
   requestedTime
 );
+const frequencyCount = datasets.reduce(
+  (total,data) => total + (data.frequencies || []).length,
+  0
+);
+
 $("status").textContent =
-  "Semakan laluan: " +
+  "Semakan: " +
   preferredDirect.length + " laluan terus, " +
-  transfers.length + " laluan pertukaran ditemui.";
+  transfers.length + " pertukaran. " +
+  "Rekod frequencies: " + frequencyCount;
 
 /* GABUNGKAN KEDUA-DUA JENIS LALUAN */
 
