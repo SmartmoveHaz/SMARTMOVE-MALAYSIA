@@ -649,14 +649,7 @@ function searchDirect(
 }
 
 
-  return output
-    .sort(
-      (x,y) =>
-        timeToMinutes(x.a.departure_time) -
-        timeToMinutes(y.a.departure_time)
-    )
-    .slice(0,5);
-}
+  
 
 
 /* CARI LALUAN SATU PERTUKARAN ANTARA OPERATOR */
