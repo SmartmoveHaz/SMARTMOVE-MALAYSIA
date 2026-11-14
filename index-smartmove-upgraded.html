@@ -642,7 +642,11 @@ function searchDirect(
     }
   }
 
-  
+  return output.sort((x,y)=>
+    timeToMinutes(x.a.departure_time)-
+    timeToMinutes(y.a.departure_time)
+  ).slice(0,10);
+}
 
 
   return output
@@ -987,16 +991,9 @@ for(const data of datasets){
   }
 }
 
-/* UTAMAKAN LRT / RAPID RAIL */
+/* PAPARKAN SEMUA OPERATOR */
 
-const railDirect = direct.filter(
-  item => item.data.name === "Rapid Rail KL"
-);
-
-let preferredDirect =
-  railDirect.length > 0
-    ? railDirect
-    : direct;
+let preferredDirect = direct;
 
 /* SUSUN MENGIKUT MASA BERLEPAS */
 
