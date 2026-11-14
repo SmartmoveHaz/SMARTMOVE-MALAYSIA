@@ -993,53 +993,56 @@ let railReport = [];
 
 if(railData){
 
-  const startRows = railData.stopTimes.filter(
-    row => row.stop_id === "KJ14"
-  );
-
-  const tripIds = [...new Set(
-    startRows.map(row => row.trip_id)
-  )];
+  const railStarts = findStops(railData,from);
+  const railEnds = findStops(railData,to);
 
   let matched = [];
   let activeCount = 0;
 
-  for(const tripId of tripIds){
+  for(const start of railStarts){
+    for(const end of railEnds){
 
-    const a = startRows.find(
-      row => row.trip_id === tripId
-    );
+      for(const [tripId,rows] of railData.timesByTrip){
 
-    const b = railData.stopTimes.find(
-      row =>
-        row.trip_id === tripId &&
-        row.stop_id === "KJ13" &&
-        Number(row.stop_sequence) >
-        Number(a.stop_sequence)
-    );
+        const a = rows.find(
+          row => row.stop_id === start.stop_id
+        );
 
-    if(!b) continue;
+        if(!a) continue;
 
-    const active = serviceRuns(
-      railData,tripId,date
-    );
+        const b = rows.find(
+          row =>
+            row.stop_id === end.stop_id &&
+            Number(row.stop_sequence) >
+            Number(a.stop_sequence)
+        );
 
-    if(active) activeCount++;
+        if(!b) continue;
 
-    matched.push(
-      tripId +
-      " | " + a.departure_time +
-      " → " + b.arrival_time +
-      " | Aktif: " + active
-    );
+        const active = serviceRuns(
+          railData,tripId,date
+        );
+
+        if(active) activeCount++;
+
+        matched.push(
+          start.stop_name + " → " +
+          end.stop_name + " | " +
+          (a.departure_time || a.arrival_time) +
+          " → " +
+          (b.arrival_time || b.departure_time) +
+          " | Aktif: " + active
+        );
+      }
+    }
   }
 
   railReport = [
-    "Jumlah rekod KJ14: " + startRows.length,
-    "Jumlah trip unik: " + tripIds.length,
-    "Trip sampai KJ13: " + matched.length,
+    "Stesen mula ditemui: " + railStarts.length,
+    "Stesen destinasi ditemui: " + railEnds.length,
+    "Trip sehala ditemui: " + matched.length,
     "Trip aktif: " + activeCount,
-    ...matched.slice(0,15)
+    ...matched.slice(0,10)
   ];
 }
 
