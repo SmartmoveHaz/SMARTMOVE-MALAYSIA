@@ -1063,17 +1063,24 @@ function getTransportMode(data, trip){
 
   if(!route) return null;
 
+  const shortName = norm(route.route_short_name || "");
   const routeText = norm(
-    (route.route_short_name || "") + " " +
+    shortName + " " +
     (route.route_long_name || "") + " " +
     (route.route_desc || "")
   );
 
-  if(/\bmrt\b|kajang|putrajaya/.test(routeText)){
+  if(
+    /\b(kgl|pyl)\b/.test(shortName) ||
+    /\bmrt\b|kajang|putrajaya/.test(routeText)
+  ){
     return "mrt";
   }
 
-  if(/\blrt\b|kelana jaya|ampang|sri petaling/.test(routeText)){
+  if(
+    /\b(kjl|agl|sbl)\b/.test(shortName) ||
+    /\blrt\b|kelana jaya|ampang|sri petaling/.test(routeText)
+  ){
     return "lrt";
   }
 
