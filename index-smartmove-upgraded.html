@@ -550,6 +550,101 @@ const norm = value =>
     .replace(/[\u0300-\u036f]/g,"")
     .toLowerCase()
     .trim();
+    
+/* ===== PILIHAN BAHASA SMARTMOVE ===== */
+
+const languageSelect = $("languageSelect");
+
+const translations = {
+  ms: {
+    tagline: "Perjalanan lebih mudah, ke mana sahaja.",
+    searchTitle: "Cari perjalanan",
+    transportTitle: "Pilih jenis pengangkutan",
+    bus: "BAS",
+    lrt: "LRT",
+    mrt: "MRT",
+    transportHint: "Boleh pilih lebih daripada satu jenis.",
+    from: "Dari",
+    to: "Ke",
+    fromPlaceholder: "Taip stesen atau hentian...",
+    toPlaceholder: "Taip destinasi...",
+    date: "Tarikh perjalanan",
+    time: "Masa perjalanan",
+    search: "Cari laluan",
+    ready: "Sedia untuk mencari perjalanan.",
+    resultTitle: "Keputusan perjalanan",
+    resultHint: "Masukkan lokasi mula dan destinasi untuk mencari laluan.",
+    dataTitle: "Maklumat data"
+  },
+  en: {
+    tagline: "Travel easier, wherever you go.",
+    searchTitle: "Plan your journey",
+    transportTitle: "Choose transport type",
+    bus: "BUS",
+    lrt: "LRT",
+    mrt: "MRT",
+    transportHint: "You can select more than one type.",
+    from: "From",
+    to: "To",
+    fromPlaceholder: "Enter station or stop...",
+    toPlaceholder: "Enter destination...",
+    date: "Travel date",
+    time: "Travel time",
+    search: "Find routes",
+    ready: "Ready to plan your journey.",
+    resultTitle: "Journey results",
+    resultHint: "Enter your starting point and destination to find routes.",
+    dataTitle: "Data information"
+  }
+};
+
+function applyLanguage(language) {
+  const t = translations[language] || translations.ms;
+
+  document.querySelector(".brand-tagline").textContent = t.tagline;
+  document.querySelector("section.card h2").textContent = t.searchTitle;
+  document.querySelector(".transport-selector p b").textContent = t.transportTitle;
+
+  document.querySelector('[data-mode="bus"] small').textContent = t.bus;
+  document.querySelector('[data-mode="lrt"] small').textContent = t.lrt;
+  document.querySelector('[data-mode="mrt"] small').textContent = t.mrt;
+
+  document.querySelector(".transport-hint").textContent = t.transportHint;
+
+  document.querySelector('label[for="from"]').textContent = t.from;
+  document.querySelector('label[for="to"]').textContent = t.to;
+  document.querySelector('label[for="date"]').textContent = t.date;
+  document.querySelector('label[for="time"]').textContent = t.time;
+
+  $("from").placeholder = t.fromPlaceholder;
+  $("to").placeholder = t.toPlaceholder;
+  $("search").textContent = t.search;
+
+  document.querySelectorAll("section.card h2")[1].textContent = t.resultTitle;
+  document.querySelector("section.card h3").textContent = t.dataTitle;
+
+  if (!$("results").dataset.hasResults) {
+    $("results").textContent = t.resultHint;
+  }
+
+  if (!$("status").dataset.loading) {
+    $("status").textContent = t.ready;
+  }
+
+  document.documentElement.lang = language;
+  localStorage.setItem("smartmove-language", language);
+}
+
+languageSelect.addEventListener("change", () => {
+  applyLanguage(languageSelect.value);
+});
+
+const savedLanguage =
+  localStorage.getItem("smartmove-language") || "ms";
+
+languageSelect.value = savedLanguage;
+applyLanguage(savedLanguage);
+
 
 const esc = value =>
   String(value ?? "").replace(/[&<>"']/g,ch => ({
