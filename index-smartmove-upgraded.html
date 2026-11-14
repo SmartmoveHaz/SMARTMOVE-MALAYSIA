@@ -1266,6 +1266,10 @@ transfers = searchTransferAcrossDatasets(
   date,
   requestedTime
 );
+$("status").textContent =
+  "Semakan laluan: " +
+  preferredDirect.length + " laluan terus, " +
+  transfers.length + " laluan pertukaran ditemui.";
 
 /* GABUNGKAN KEDUA-DUA JENIS LALUAN */
 
