@@ -113,15 +113,15 @@ button:disabled{opacity:.6}
 <section class="card">
   <h2>Cari perjalanan</h2>
 
-  <label for="from">Dari</label>
-  <input id="from" list="station-list"
-    placeholder="Contoh: Pasar Seni" autocomplete="off">
+  <label for="from">Dari — Pilih hentian</label>
+<select id="from">
+  <option value="">Memuatkan senarai hentian...</option>
+</select>
 
-  <label for="to">Ke</label>
-  <input id="to" list="station-list"
-    placeholder="Contoh: Kajang" autocomplete="off">
-
-  <datalist id="station-list"></datalist>
+<label for="to">Ke — Pilih hentian</label>
+<select id="to">
+  <option value="">Memuatkan senarai hentian...</option>
+</select>
 
   <label for="date">Tarikh perjalanan</label>
   <input id="date" type="date">
@@ -390,14 +390,22 @@ function populateStationHints(){
     }
   }
 
-  $("station-list").innerHTML =
-    [...names]
-      .sort((a,b)=>a.localeCompare(b,"ms"))
-      .slice(0,5000)
-      .map(name =>
-        '<option value="' + esc(name) + '"></option>'
-      )
-      .join("");
+  const options = [...names]
+    .sort((a,b)=>a.localeCompare(b,"ms"))
+    .map(name =>
+      '<option value="' + esc(name) + '">' +
+      esc(name) +
+      '</option>'
+    )
+    .join("");
+
+  $("from").innerHTML =
+    '<option value="">Pilih lokasi mula</option>' +
+    options;
+
+  $("to").innerHTML =
+    '<option value="">Pilih destinasi</option>' +
+    options;
 }
 
 /* CARI STESEN */
