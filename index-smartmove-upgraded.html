@@ -635,6 +635,61 @@ function applyLanguage(language) {
   localStorage.setItem("smartmove-language", language);
 }
 
+/* ===== TERJEMAHAN KEPUTUSAN LALUAN ===== */
+
+const routeTranslations = {
+  ms: {
+    direct: "✓ Laluan terus",
+    transfer: "↔ Laluan dengan satu pertukaran",
+    firstMap: "Peta perjalanan pertama",
+    secondMap: "Peta perjalanan kedua",
+    start: "Mula",
+    stop: "Hentian",
+    destination: "Destinasi",
+    route: "Laluan",
+    departure: "Berlepas",
+    arrival: "Tiba",
+    transferPlace: "Tempat pertukaran",
+    transferArrival: "Tiba di tempat pertukaran",
+    continueJourney: "Sambung perjalanan",
+    waiting: "Tempoh menunggu",
+    destinationArrival: "Tiba destinasi",
+    viewStops: "Lihat hentian perjalanan",
+    firstJourney: "Perjalanan pertama",
+    secondJourney: "Perjalanan kedua",
+    minutes: "minit",
+    noRoutes: "Tiada laluan ditemui dalam data yang tersedia. Cuba nama stesen yang lebih ringkas atau semak tarikh perjalanan."
+  },
+  en: {
+    direct: "✓ Direct route",
+    transfer: "↔ Route with one transfer",
+    firstMap: "First journey map",
+    secondMap: "Second journey map",
+    start: "Start",
+    stop: "Stop",
+    destination: "Destination",
+    route: "Route",
+    departure: "Departure",
+    arrival: "Arrival",
+    transferPlace: "Transfer station",
+    transferArrival: "Arrival at transfer station",
+    continueJourney: "Continue journey",
+    waiting: "Waiting time",
+    destinationArrival: "Arrival at destination",
+    viewStops: "View journey stops",
+    firstJourney: "First journey",
+    secondJourney: "Second journey",
+    minutes: "minutes",
+    noRoutes: "No routes found in the available data. Try a shorter station name or check the travel date."
+  }
+};
+
+function routeText(key) {
+  const language = languageSelect.value || "ms";
+  return routeTranslations[language][key] ||
+    routeTranslations.ms[key] || key;
+}
+
 languageSelect.addEventListener("change", () => {
   applyLanguage(languageSelect.value);
 });
