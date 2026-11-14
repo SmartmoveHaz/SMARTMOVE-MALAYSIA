@@ -891,6 +891,7 @@ function searchTransferAcrossDatasets(
 
 /* PAPAR KEPUTUSAN LALUAN */
 
+
 function showResult(item,index){
 
   if(item.type === "direct"){
@@ -903,32 +904,18 @@ function showResult(item,index){
         '</ol>'
       : "";
 
-
-  const transferArrival =
-    item.mid.arrival_time || item.mid.departure_time || "-";
-
-  const transferDeparture =
-    item.transfer.departure_time || item.transfer.arrival_time || "-";
-
-  let waitingMinutes =
-    timeToMinutes(transferDeparture) -
-    timeToMinutes(transferArrival);
-
-  if(waitingMinutes < 0) waitingMinutes += 1440;
-
-  return `
-    <article class="result">
+    return `
+      <article class="result">
         <div class="result-title">✓ Laluan terus</div>
         <div class="route-map" id="route-map-${index}"></div>
-                <div style="display:flex; gap:16px; flex-wrap:wrap; margin:10px 0; font-size:13px;">
+
+        <div style="display:flex; gap:16px; flex-wrap:wrap; margin:10px 0; font-size:13px;">
           <span><span style="color:#16a34a;">●</span> Mula</span>
           <span><span style="color:#2563eb;">●</span> Hentian</span>
           <span><span style="color:#dc2626;">●</span> Destinasi</span>
         </div>
 
-        <p>
-          <span class="pill">${esc(item.data.name)}</span>
-        </p>
+        <p><span class="pill">${esc(item.data.name)}</span></p>
 
         <p><b>Laluan:</b>
           ${esc(routeName(item.data,item.trip))}
@@ -949,6 +936,7 @@ function showResult(item,index){
       </article>
     `;
   }
+
   const transferArrival =
     item.mid.arrival_time || item.mid.departure_time || "-";
 
@@ -960,22 +948,23 @@ function showResult(item,index){
     timeToMinutes(transferArrival);
 
   if(waitingMinutes < 0) waitingMinutes += 1440;
+
   return `
     <article class="result">
 
       <div class="result-title">
         ↔ Laluan dengan satu pertukaran
       </div>
+
       <div><b>Peta perjalanan pertama</b></div>
-<div class="route-map" id="transfer-map-1-${index}"></div>
+      <div class="route-map" id="transfer-map-1-${index}"></div>
 
-<div><b>Peta perjalanan kedua</b></div>
-<div class="route-map" id="transfer-map-2-${index}"></div>
-
+      <div><b>Peta perjalanan kedua</b></div>
+      <div class="route-map" id="transfer-map-2-${index}"></div>
 
       <p>
         <span class="pill">${esc(item.data.name)}</span>
-<span class="pill">${esc(item.data2.name)}</span>
+        <span class="pill">${esc(item.data2.name)}</span>
       </p>
 
       <p><b>Laluan 1:</b>
@@ -990,15 +979,23 @@ function showResult(item,index){
         ${esc(stopLabel(item.data,item.mid.stop_id))}
       </p>
 
+      <p><b>Tiba di tempat pertukaran:</b>
+        ${esc(transferArrival)}
+      </p>
+
       <p><b>Laluan 2:</b>
         ${esc(routeName(item.data2,item.t2))}
       </p>
 
-      <p><b>Sambung:</b>
-        ${esc(item.transfer.departure_time || item.transfer.arrival_time || "-")}
+      <p><b>Sambung perjalanan:</b>
+        ${esc(transferDeparture)}
       </p>
 
-      <p><b>Tiba:</b>
+      <p><b>Tempoh menunggu:</b>
+        ${waitingMinutes} minit
+      </p>
+
+      <p><b>Tiba destinasi:</b>
         ${esc(item.finalStop.arrival_time || item.finalStop.departure_time || "-")}
       </p>
 
@@ -1023,6 +1020,7 @@ function showResult(item,index){
     </article>
   `;
 }
+
 /* PAPAR PETA LALUAN */
 
 function renderRouteMap(item,index){
