@@ -903,8 +903,22 @@ function showResult(item,index){
         '</ol>'
       : "";
 
-    return `
-      <article class="result">
+      }
+
+  const transferArrival =
+    item.mid.arrival_time || item.mid.departure_time || "-";
+
+  const transferDeparture =
+    item.transfer.departure_time || item.transfer.arrival_time || "-";
+
+  let waitingMinutes =
+    timeToMinutes(transferDeparture) -
+    timeToMinutes(transferArrival);
+
+  if(waitingMinutes < 0) waitingMinutes += 1440;
+
+  return `
+    <article class="result">
         <div class="result-title">✓ Laluan terus</div>
         <div class="route-map" id="route-map-${index}"></div>
                 <div style="display:flex; gap:16px; flex-wrap:wrap; margin:10px 0; font-size:13px;">
