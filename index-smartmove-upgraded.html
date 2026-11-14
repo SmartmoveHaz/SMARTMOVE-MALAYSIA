@@ -245,14 +245,16 @@ async function loadFeed(feed){
     trips,
     stopTimes,
     calendar,
-    exceptions
+    exceptions,
+    frequencies
   ] = await Promise.all([
     get("stops.txt"),
     get("routes.txt"),
     get("trips.txt"),
     get("stop_times.txt"),
     get("calendar.txt"),
-    get("calendar_dates.txt")
+get("calendar_dates.txt"),
+get("frequencies.txt")
   ]);
 
   if(!stops.length || !trips.length || !stopTimes.length){
@@ -307,8 +309,9 @@ async function loadFeed(feed){
     trips,
     stopTimes,
     calendar,
-    exceptions,
-    stopById,
+exceptions,
+frequencies,
+stopById,
     tripById,
     routeById,
     timesByTrip,
