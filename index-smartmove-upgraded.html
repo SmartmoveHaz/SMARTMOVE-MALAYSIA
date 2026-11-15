@@ -1628,7 +1628,6 @@ function showResult(item,index){
 
 /* PAPAR PETA LALUAN */
 
-function renderRouteMap(item,index){
 function googleMapsButton(stop){
 
   const lat = Number(stop.stop_lat);
@@ -1665,6 +1664,8 @@ function googleMapsButton(stop){
     </a>
   `;
 }
+
+function renderRouteMap(item,index){
   const mapElement = document.getElementById(
     "route-map-" + index
   );
