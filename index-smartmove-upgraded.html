@@ -153,7 +153,20 @@ button:disabled{opacity:.6}
 .transport-option span {
   font-size: 28px;
 }
+.transport-option .transport-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 58px;
+}
 
+.transport-option .transport-image img {
+  width: 100%;
+  max-width: 88px;
+  height: 58px;
+  object-fit: contain;
+}
 .transport-option small {
   font-size: 13px;
   font-weight: bold;
@@ -354,9 +367,6 @@ button:disabled {
   gap: 14px;
 }
 .brand-mark {
-  width: 58px;
-  height: 58px;
-  display: flex;
   align-items: center;
   justify-content: center;
   background: #DDF8F3;
@@ -524,17 +534,23 @@ button:disabled {
 
   <div class="transport-options">
     <button type="button" class="transport-option active" data-mode="bus" aria-pressed="true">
-      <span>🚌</span>
+      <span class="transport-image">
+  <img src="bus.webp" alt="Bas">
+</span>
       <small>BAS</small>
     </button>
 
     <button type="button" class="transport-option active" data-mode="lrt" aria-pressed="true">
-      <span>🚈</span>
+      <span class="transport-image">
+  <img src="lrt.webp" alt="LRT">
+</span>
       <small>LRT</small>
     </button>
 
     <button type="button" class="transport-option active" data-mode="mrt" aria-pressed="true">
-      <span>🚇</span>
+      <span class="transport-image">
+  <img src="mrt.webp" alt="MRT">
+</span>
       <small>MRT</small>
     </button>
   </div>
