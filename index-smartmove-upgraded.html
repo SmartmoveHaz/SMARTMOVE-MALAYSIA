@@ -2161,8 +2161,8 @@ $("status").textContent =
 /* GABUNGKAN KEDUA-DUA JENIS LALUAN */
 
 let all = [
-  ...preferredDirect.slice(0,5),
-  ...transfers.slice(0,5)
+  ...preferredDirect,
+  ...transfers
 ];
 
 function getResultDeparture(item){
