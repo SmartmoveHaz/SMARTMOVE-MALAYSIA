@@ -1411,13 +1411,18 @@ function searchTransferAcrossDatasets(
 
               const transfer = secondRows[transferIndex];
 
-              const nextDeparture = timeToMinutes(
-                transfer.departure_time || transfer.arrival_time
-              );
+              let nextDeparture = timeToMinutes(
+  transfer.departure_time || transfer.arrival_time
+);
 
-              if(nextDeparture === null) continue;
+if(nextDeparture === null) continue;
 
-              const waitingTime = nextDeparture - arrival;
+// Jika perjalanan melintasi tengah malam
+if(nextDeparture < arrival){
+  nextDeparture += 1440;
+}
+
+const waitingTime = nextDeparture - arrival;
 
               // Minimum 3 minit, maksimum 60 minit
               if(waitingTime < 3 || waitingTime > 60) continue;
@@ -1955,8 +1960,22 @@ let all = [
   ...transfers.slice(0,5)
 ];
 
-all = all.slice(0,10);
+function getResultDeparture(item){
+  const value = item.type === "direct"
+    ? (item.a.departure_time || item.a.arrival_time)
+    : (item.boarding.departure_time || item.boarding.arrival_time);
 
+  return timeToMinutes(value) ?? 99999;
+}
+
+all.sort((a,b) =>
+  getResultDeparture(a) - getResultDeparture(b)
+);
+
+all = all.slice(0,10);
+lastSearchResults = all;
+lastSearchResults = all;
+lastSearchResults = all;
 
 
 
