@@ -1691,6 +1691,7 @@ function showResult(item,index){
 
 /* PAPAR PETA LALUAN */
 
+
 function googleMapsButton(stop){
 
   const lat = Number(stop.stop_lat);
@@ -1716,17 +1717,19 @@ function googleMapsButton(stop){
        target="_blank"
        rel="noopener noreferrer"
        style="display:inline-block;
-       margin-top:8px;
-       padding:9px 13px;
+       margin-top:4px;
+       padding:4px 7px;
        background:#087F78;
        color:white;
-       border-radius:8px;
+       border-radius:6px;
        text-decoration:none;
+       font-size:10px;
        font-weight:bold;">
-       📍 Buka Google Maps
+       📍 Google Maps
     </a>
   `;
 }
+
 
 function renderRouteMap(item,index){
   const mapElement = document.getElementById(
