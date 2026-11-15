@@ -1998,7 +1998,40 @@ function getJourneyStopCount(item){
   );
 }
 
+function sortJourneyResults(list = lastSearchResults){
 
+  const select = document.getElementById("routeSort");
+  const mode = select ? select.value : "earliest";
+
+  list.sort((a,b)=>{
+
+    if(mode === "fastest"){
+      return getJourneyDuration(a) - getJourneyDuration(b);
+    }
+
+    if(mode === "fewestTransfers"){
+      return (a.type === "direct" ? 0 : 1) -
+             (b.type === "direct" ? 0 : 1);
+    }
+
+    if(mode === "fewestStops"){
+      return getJourneyStopCount(a) -
+             getJourneyStopCount(b);
+    }
+
+    const aTime = a.type === "direct"
+      ? a.a.departure_time
+      : a.boarding.departure_time || a.boarding.arrival_time;
+
+    const bTime = b.type === "direct"
+      ? b.a.departure_time
+      : b.boarding.departure_time || b.boarding.arrival_time;
+
+    return (timeToMinutes(aTime) ?? 99999) -
+           (timeToMinutes(bTime) ?? 99999);
+  });
+
+}
 const selectedTransportModes = new Set(["bus", "lrt", "mrt"]);
 
 document.querySelectorAll(".transport-option").forEach(button => {
@@ -2140,9 +2173,7 @@ function getResultDeparture(item){
   return timeToMinutes(value) ?? 99999;
 }
 
-all.sort((a,b) =>
-  getResultDeparture(a) - getResultDeparture(b)
-);
+sortJourneyResults(all);
 
 all = all.slice(0,10);
 lastSearchResults = all;
