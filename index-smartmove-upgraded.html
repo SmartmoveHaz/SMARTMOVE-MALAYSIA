@@ -130,9 +130,17 @@ button:disabled{opacity:.6}
 }
 
 .transport-options {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+  .transport-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
 }
 
 .transport-option {
@@ -414,22 +422,6 @@ button:disabled {
   overflow: hidden;
 }
 
-.train-icon {
-  display: inline-block;
-  animation: trainTravel 2.5s ease-in-out infinite;
-}
-
-@keyframes trainTravel {
-  0% {
-    transform: translateX(-8px);
-  }
-  50% {
-    transform: translateX(8px);
-  }
-  100% {
-    transform: translateX(-8px);
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .train-icon {
@@ -490,7 +482,7 @@ button:disabled {
 <header>
   <div class="brand-lockup">
     <div class="brand-mark">
-  <img class="train-icon"
+  <img
      src="smartmove-logo.webp"
      alt="SMARTMOVE Malaysia">
 </div>
@@ -540,6 +532,12 @@ button:disabled {
 </span>
       <small>MRT</small>
     </button>
+    <button type="button" class="transport-option active" data-mode="ktm" aria-pressed="true">
+  <span class="transport-image">
+    <img src="ktm-komuter.webp" alt="KTM Komuter">
+  </span>
+  <small>KTM KOMUTER</small>
+</button>
   </div>
 
   <small class="transport-hint">Boleh pilih lebih daripada satu jenis.</small>
@@ -651,6 +649,7 @@ const translations = {
     bus: "BAS",
     lrt: "LRT",
     mrt: "MRT",
+    ktm: "KTM KOMUTER",
     transportHint: "Boleh pilih lebih daripada satu jenis.",
     from: "Dari",
     to: "Ke",
@@ -696,7 +695,7 @@ function applyLanguage(language) {
   document.querySelector('[data-mode="bus"] small').textContent = t.bus;
   document.querySelector('[data-mode="lrt"] small').textContent = t.lrt;
   document.querySelector('[data-mode="mrt"] small').textContent = t.mrt;
-
+document.querySelector('[data-mode="ktm"] small').textContent = t.ktm;
   document.querySelector(".transport-hint").textContent = t.transportHint;
 
   document.querySelector('label[for="from"]').textContent = t.from;
@@ -1145,7 +1144,9 @@ function getTransportMode(data, trip){
   ){
     return "bus";
   }
-
+if(data.name === "KTMB"){
+  return "ktm";
+}
   if(data.name !== "Rapid Rail KL"){
     return null;
   }
@@ -1212,7 +1213,6 @@ function getTransportLabel(data, trip) {
       ? "MRT FEEDER"
       : "BAS";
   }
-
   if (data.name === "KTMB") return "KTM KOMUTER";
 
   return "PENGANGKUTAN";
@@ -2059,7 +2059,7 @@ function sortJourneyResults(list = lastSearchResults){
   });
 
 }
-const selectedTransportModes = new Set(["bus", "lrt", "mrt"]);
+const selectedTransportModes = new Set(["bus", "lrt", "mrt", "ktm"])
 
 document.querySelectorAll(".transport-option").forEach(button => {
   button.addEventListener("click", () => {
