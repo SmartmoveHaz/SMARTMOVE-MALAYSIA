@@ -1357,9 +1357,9 @@ function searchDirect(
   }
 
   return output.sort((x,y)=>
-    timeToMinutes(x.a.departure_time)-
-    timeToMinutes(y.a.departure_time)
-  ).slice(0,10);
+  timeToMinutes(x.a.departure_time)-
+  timeToMinutes(y.a.departure_time)
+);
 }
 
 
@@ -1523,9 +1523,7 @@ const waitingTime = nextDeparture - arrival;
                   .map(row => stopLabel(data2,row.stop_id))
               });
 
-              if(output.length >= 10){
-                return output;
-              }
+              
             }
           }
         }
