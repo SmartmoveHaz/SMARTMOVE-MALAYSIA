@@ -544,6 +544,18 @@ button:disabled {
 
 <section class="card">
   <h2>Keputusan perjalanan</h2>
+  <div style="margin:12px 0;">
+  <label for="routeSort"><b>Susun keputusan:</b></label>
+  <select id="routeSort"
+    style="width:100%; padding:11px;
+    border:1px solid #cbd5e1;
+    border-radius:9px; margin-top:6px;">
+    <option value="earliest">🕒 Paling awal</option>
+    <option value="fastest">⚡ Paling cepat</option>
+    <option value="fewestTransfers">🔄 Paling sedikit pertukaran</option>
+    <option value="fewestStops">🚏 Paling sedikit hentian</option>
+  </select>
+</div>
   <div id="results">
     Masukkan lokasi mula dan destinasi untuk mencari laluan.
   </div>
@@ -1946,6 +1958,74 @@ function renderSearchResults() {
     });
   }
 }
+
+function getJourneyDuration(item){
+
+  const startTime = item.type === "direct"
+    ? item.a.departure_time
+    : item.boarding.departure_time || item.boarding.arrival_time;
+
+  const endTime = item.type === "direct"
+    ? item.b.arrival_time
+    : item.finalStop.arrival_time || item.finalStop.departure_time;
+
+  let start = timeToMinutes(startTime);
+  let end = timeToMinutes(endTime);
+
+  if(start === null || end === null) return 99999;
+
+  if(end < start) end += 1440;
+
+  return end - start;
+}
+
+function getJourneyStopCount(item){
+
+  if(item.type === "direct"){
+    return item.stationList?.length ?? 99999;
+  }
+
+  return Math.max(
+    0,
+    (item.firstStops?.length || 0) +
+    (item.secondStops?.length || 0) - 1
+  );
+}
+
+function sortJourneyResults(){
+
+  const select = document.getElementById("routeSort");
+  const mode = select ? select.value : "earliest";
+
+  lastSearchResults.sort((a,b)=>{
+
+    if(mode === "fastest"){
+      return getJourneyDuration(a) - getJourneyDuration(b);
+    }
+
+    if(mode === "fewestTransfers"){
+      return (a.type === "direct" ? 0 : 1) -
+             (b.type === "direct" ? 0 : 1);
+    }
+
+    if(mode === "fewestStops"){
+      return getJourneyStopCount(a) -
+             getJourneyStopCount(b);
+    }
+
+    const aTime = a.type === "direct"
+      ? a.a.departure_time
+      : a.boarding.departure_time || a.boarding.arrival_time;
+
+    const bTime = b.type === "direct"
+      ? b.a.departure_time
+      : b.boarding.departure_time || b.boarding.arrival_time;
+
+    return (timeToMinutes(aTime) ?? 99999) -
+           (timeToMinutes(bTime) ?? 99999);
+  });
+}
+
 const selectedTransportModes = new Set(["bus", "lrt", "mrt"]);
 
 document.querySelectorAll(".transport-option").forEach(button => {
@@ -1962,6 +2042,15 @@ document.querySelectorAll(".transport-option").forEach(button => {
       button.setAttribute("aria-pressed", "true");
     }
   });
+});
+
+/* AKTIFKAN SUSUNAN PERBANDINGAN LALUAN */
+
+document.getElementById("routeSort").addEventListener("change", () => {
+
+  sortJourneyResults();
+  renderSearchResults();
+
 });
 
 /* PROSES CARIAN */
