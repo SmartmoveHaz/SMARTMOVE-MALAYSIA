@@ -415,6 +415,41 @@ button:disabled {
     animation: none;
   }
 }
+/* PAPARAN 3 LOKASI PERJALANAN */
+
+.location-summary {
+  background: #F0F8F7;
+  border: 1px solid #D5EAE7;
+  border-radius: 15px;
+  padding: 14px;
+  margin: 15px 0;
+}
+
+.location-summary p {
+  background: white;
+  padding: 12px;
+  border-radius: 10px;
+  margin: 10px 0;
+  line-height: 1.7;
+  border-left: 4px solid #087F78;
+}
+
+.location-summary p:first-child {
+  border-left-color: #16a34a;
+}
+
+.location-summary p:nth-child(2) {
+  border-left-color: #f59e0b;
+}
+
+.location-summary p:last-child {
+  border-left-color: #dc2626;
+}
+
+.location-summary a {
+  display: inline-block;
+  margin-top: 8px;
+}
 </style>
 </head>
 
@@ -1551,7 +1586,24 @@ function showResult(item,index){
       <div class="result-title">
   ${routeText("transfer")}
 </div>
+      <div class="location-summary">
 
+        <p><b>🟢 LOKASI MULA</b><br>
+        ${esc(stopLabel(item.data,item.boarding.stop_id))}
+        ${googleMapsButton(item.data.stopById.get(item.boarding.stop_id))}
+        </p>
+
+        <p><b>🟠 LOKASI PERTUKARAN</b><br>
+        ${esc(stopLabel(item.data,item.mid.stop_id))}
+        ${googleMapsButton(item.data.stopById.get(item.mid.stop_id))}
+        </p>
+
+        <p><b>🔴 DESTINASI AKHIR</b><br>
+        ${esc(stopLabel(item.data2,item.finalStop.stop_id))}
+        ${googleMapsButton(item.data2.stopById.get(item.finalStop.stop_id))}
+        </p>
+
+      </div>
       <div><b>${routeText("firstMap")}</b></div>
       <div class="route-map" id="transfer-map-1-${index}"></div>
 
