@@ -1979,52 +1979,25 @@ function getJourneyDuration(item){
   return end - start;
 }
 
+
 function getJourneyStopCount(item){
 
   if(item.type === "direct"){
-    return item.stationList?.length ?? 99999;
+    return Math.max(
+      0,
+      (item.stationList?.length || 0) - 1
+    );
   }
+
+  const firstCount = item.firstStops?.length || 0;
+  const secondCount = item.secondStops?.length || 0;
 
   return Math.max(
     0,
-    (item.firstStops?.length || 0) +
-    (item.secondStops?.length || 0) - 1
+    firstCount + secondCount - 2
   );
 }
 
-function sortJourneyResults(){
-
-  const select = document.getElementById("routeSort");
-  const mode = select ? select.value : "earliest";
-
-  lastSearchResults.sort((a,b)=>{
-
-    if(mode === "fastest"){
-      return getJourneyDuration(a) - getJourneyDuration(b);
-    }
-
-    if(mode === "fewestTransfers"){
-      return (a.type === "direct" ? 0 : 1) -
-             (b.type === "direct" ? 0 : 1);
-    }
-
-    if(mode === "fewestStops"){
-      return getJourneyStopCount(a) -
-             getJourneyStopCount(b);
-    }
-
-    const aTime = a.type === "direct"
-      ? a.a.departure_time
-      : a.boarding.departure_time || a.boarding.arrival_time;
-
-    const bTime = b.type === "direct"
-      ? b.a.departure_time
-      : b.boarding.departure_time || b.boarding.arrival_time;
-
-    return (timeToMinutes(aTime) ?? 99999) -
-           (timeToMinutes(bTime) ?? 99999);
-  });
-}
 
 const selectedTransportModes = new Set(["bus", "lrt", "mrt"]);
 
