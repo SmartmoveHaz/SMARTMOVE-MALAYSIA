@@ -1876,9 +1876,7 @@ if(!window.L){
   .bindPopup(
   "<b>" + label + "</b><br>" +
   esc(stop.stop_name || "Hentian") +
-  (i === points.length - 1
-    ? googleMapsButton(stop)
-    : "")
+  googleMapsButton(stop)
 );
 
 });
