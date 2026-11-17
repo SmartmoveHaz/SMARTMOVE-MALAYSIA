@@ -1182,17 +1182,22 @@ function routeName(data,trip){
     : "Laluan";
 }
 
+
 function getTransportMode(data, trip){
 
   if(
     data.name === "Rapid Bus KL" ||
-    data.name === "MRT Feeder"
+    data.name === "MRT Feeder" ||
+    data.name === "Rapid Penang" ||
+    data.name.startsWith("BAS.MY")
   ){
     return "bus";
   }
-if(data.name === "KTMB"){
-  return "ktm";
-}
+
+  if(data.name === "KTMB"){
+    return "ktm";
+  }
+
   if(data.name !== "Rapid Rail KL"){
     return null;
   }
@@ -1224,6 +1229,7 @@ if(data.name === "KTMB"){
 
   return null;
 }
+
 
 function isTransportSelected(data, trip){
   return selectedTransportModes.has(
