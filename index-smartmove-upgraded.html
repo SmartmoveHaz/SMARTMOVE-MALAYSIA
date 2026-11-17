@@ -2292,6 +2292,27 @@ visiMisiButton.addEventListener("click", () => {
     block: "start"
   });
 });
+/* ===== PAPARAN PROFIL SMARTMOVE ===== */
+
+const profilButton =
+  document.querySelectorAll(".header-menu-content button")[1];
+
+const profilPanel = $("profilPanel");
+
+$("closeProfil").addEventListener("click", () => {
+  profilPanel.hidden = true;
+});
+
+profilButton.addEventListener("click", () => {
+  profilPanel.hidden = false;
+
+  document.querySelector(".header-menu").removeAttribute("open");
+
+  profilPanel.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+});
 /* PROSES CARIAN */
 
 $("search").addEventListener("click",async()=>{
