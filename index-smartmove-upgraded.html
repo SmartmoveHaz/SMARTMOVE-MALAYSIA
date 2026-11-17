@@ -1119,7 +1119,31 @@ function findStops(data,query){
     stop => norm(stop.stop_name).includes(q)
   );
 }
+/* MUAT DATA APABILA LOKASI DIPILIH */
 
+["from","to"].forEach(inputId => {
+
+  const input = $(inputId);
+
+  input.addEventListener("focus", () => {
+
+    if(!datasets.length && !loadingPromise){
+
+      loadData()
+        .then(() => {
+          input.dispatchEvent(new Event("input"));
+        })
+        .catch(error => {
+          $("status").textContent =
+            "Gagal memuatkan senarai stesen: " +
+            error.message;
+        });
+
+    }
+
+  });
+
+});
 /* SEMAK HARI OPERASI */
 
 function serviceRuns(data,tripId,date){
