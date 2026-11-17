@@ -605,6 +605,7 @@ button:disabled {
 
 /* SUMBER DATA PENGANGKUTAN */
 
+
 const FEEDS = [
   {
     name:"Rapid Rail KL",
@@ -619,10 +620,55 @@ const FEEDS = [
     url:"https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-mrtfeeder"
   },
   {
+    name:"Rapid Penang",
+    url:"https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-penang"
+  },
+  {
     name:"KTMB",
     url:"https://api.data.gov.my/gtfs-static/ktmb"
+  },
+  {
+    name:"BAS.MY Kangar",
+    url:"https://api.data.gov.my/gtfs-static/mybas-kangar"
+  },
+  {
+    name:"BAS.MY Alor Setar",
+    url:"https://api.data.gov.my/gtfs-static/mybas-alor-setar"
+  },
+  {
+    name:"BAS.MY Kota Bharu",
+    url:"https://api.data.gov.my/gtfs-static/mybas-kota-bharu"
+  },
+  {
+    name:"BAS.MY Kuala Terengganu",
+    url:"https://api.data.gov.my/gtfs-static/mybas-kuala-terengganu"
+  },
+  {
+    name:"BAS.MY Ipoh",
+    url:"https://api.data.gov.my/gtfs-static/mybas-ipoh"
+  },
+  {
+    name:"BAS.MY Seremban A",
+    url:"https://api.data.gov.my/gtfs-static/mybas-seremban-a"
+  },
+  {
+    name:"BAS.MY Seremban B",
+    url:"https://api.data.gov.my/gtfs-static/mybas-seremban-b"
+  },
+  {
+    name:"BAS.MY Melaka",
+    url:"https://api.data.gov.my/gtfs-static/mybas-melaka"
+  },
+  {
+    name:"BAS.MY Johor Bahru",
+    url:"https://api.data.gov.my/gtfs-static/mybas-johor"
+  },
+  {
+    name:"BAS.MY Kuching",
+    url:"https://api.data.gov.my/gtfs-static/mybas-kuching"
   }
 ];
+
 
 let datasets = [];
 let loadingPromise = null;
