@@ -2254,7 +2254,27 @@ document.getElementById("routeSort").addEventListener("change", () => {
   renderSearchResults();
 
 });
+/* ===== PAPARAN VISI & MISI ===== */
 
+const visiMisiButton =
+  document.querySelector(".header-menu-content button");
+
+const visiMisiPanel = $("visiMisiPanel");
+
+$("closeVisiMisi").addEventListener("click", () => {
+  visiMisiPanel.hidden = true;
+});
+
+visiMisiButton.addEventListener("click", () => {
+  visiMisiPanel.hidden = false;
+
+  document.querySelector(".header-menu").removeAttribute("open");
+
+  visiMisiPanel.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+});
 /* PROSES CARIAN */
 
 $("search").addEventListener("click",async()=>{
