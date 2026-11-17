@@ -474,6 +474,63 @@ button:disabled {
   font-size: 10px !important;
   border-radius: 6px !important;
 }
+
+/* ===== SMARTMOVE MAIN MENU ===== */
+
+header {
+  position: relative;
+}
+
+.header-menu {
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  z-index: 1000;
+}
+
+.header-menu summary {
+  list-style: none;
+  cursor: pointer;
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 1;
+  padding: 5px 10px;
+}
+
+.header-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.header-menu-content {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 270px;
+  max-width: calc(100vw - 32px);
+  padding: 10px;
+  background: white;
+  border: 1px solid #DCEAEA;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px #00000030;
+}
+
+.header-menu-content button {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 13px;
+  text-align: left;
+  background: white;
+  color: #18343B;
+  border-radius: 9px;
+  font-size: 14px;
+}
+
+.header-menu-content button:active {
+  background: #DDF8F3;
+}
+
 </style>
 </head>
 
