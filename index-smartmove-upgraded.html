@@ -1728,22 +1728,39 @@ function showResult(item,index){
   `;
 }
 
+function hasValidCoordinates(stop){
+
+  if(!stop) return false;
+
+  const latText = String(stop.stop_lat ?? "").trim();
+  const lonText = String(stop.stop_lon ?? "").trim();
+
+  if(!latText || !lonText) return false;
+
+  const lat = Number(latText);
+  const lon = Number(lonText);
+
+  return (
+    Number.isFinite(lat) &&
+    Number.isFinite(lon) &&
+    lat >= -90 &&
+    lat <= 90 &&
+    lon >= -180 &&
+    lon <= 180
+  );
+}
+
 /* PAPAR PETA LALUAN */
 
 
 function googleMapsButton(stop){
 
-  const lat = Number(stop.stop_lat);
-  const lon = Number(stop.stop_lon);
-
-  if(
-    stop.stop_lat === "" ||
-    stop.stop_lon === "" ||
-    !Number.isFinite(lat) ||
-    !Number.isFinite(lon)
-  ){
+  if(!hasValidCoordinates(stop)){
     return "";
   }
+
+  const lat = Number(stop.stop_lat);
+  const lon = Number(stop.stop_lon);
 
   const url =
     "https://www.google.com/maps/dir/?api=1" +
@@ -1803,11 +1820,7 @@ if(!window.L){
   const points = rows
     .slice(startIndex,endIndex+1)
     .map(row => item.data.stopById.get(row.stop_id))
-    .filter(stop =>
-      stop &&
-      Number.isFinite(Number(stop.stop_lat)) &&
-      Number.isFinite(Number(stop.stop_lon))
-    );
+    .filter(hasValidCoordinates);
 
   if(!points.length){
     mapElement.textContent =
@@ -1896,13 +1909,7 @@ function renderTransferMap(data,trip,startStop,endStop,mapId){
   const points = rows
     .slice(startIndex,endIndex+1)
     .map(row => data.stopById.get(row.stop_id))
-    .filter(stop =>
-      stop &&
-      stop.stop_lat !== "" &&
-      stop.stop_lon !== "" &&
-      Number.isFinite(Number(stop.stop_lat)) &&
-      Number.isFinite(Number(stop.stop_lon))
-    );
+    .filter(hasValidCoordinates);
 
   if(!points.length) return;
 
