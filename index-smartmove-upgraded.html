@@ -1948,9 +1948,7 @@ function renderTransferMap(data,trip,startStop,endStop,mapId){
     .addTo(map)
     .bindPopup(
   esc(stop.stop_name || "Hentian") +
-  (i === points.length - 1
-    ? googleMapsButton(stop)
-    : "")
+  googleMapsButton(stop)
 );
 
   });
