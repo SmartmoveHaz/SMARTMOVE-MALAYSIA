@@ -652,6 +652,36 @@ header {
     Tidak semua kategori tersedia untuk carian perjalanan buat masa ini.
   </p>
 </div>
+<div id="petaLiputanPanel" class="info-panel" hidden>
+  <button type="button" id="closePetaLiputan">✕ Tutup</button>
+
+  <h2>🗺️ Peta & Liputan SMARTMOVE</h2>
+
+  <p>
+    SMARTMOVE dibangunkan dengan matlamat menghubungkan
+    perkhidmatan pengangkutan di seluruh Malaysia.
+  </p>
+
+  <h3>🇲🇾 Semenanjung Malaysia</h3>
+  <ul>
+    <li>Utara</li>
+    <li>Tengah</li>
+    <li>Selatan</li>
+    <li>Pantai Timur</li>
+  </ul>
+
+  <h3>🌳 Sabah</h3>
+  <p>Pengangkutan darat, udara dan laut.</p>
+
+  <h3>🌴 Sarawak</h3>
+  <p>Pengangkutan darat, udara dan sungai.</p>
+
+  <p class="small">
+    Liputan sebenar bergantung pada data dan integrasi
+    operator yang tersedia. Kawasan yang disenaraikan
+    belum semestinya mempunyai carian perjalanan aktif.
+  </p>
+</div>
 <main>
 
 <section class="card">
@@ -2372,6 +2402,27 @@ perkhidmatanButton.addEventListener("click", () => {
   document.querySelector(".header-menu").removeAttribute("open");
 
   perkhidmatanPanel.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+});
+/* ===== PAPARAN PETA & LIPUTAN ===== */
+
+const petaLiputanButton =
+  document.querySelectorAll(".header-menu-content button")[3];
+
+const petaLiputanPanel = $("petaLiputanPanel");
+
+$("closePetaLiputan").addEventListener("click", () => {
+  petaLiputanPanel.hidden = true;
+});
+
+petaLiputanButton.addEventListener("click", () => {
+  petaLiputanPanel.hidden = false;
+
+  document.querySelector(".header-menu").removeAttribute("open");
+
+  petaLiputanPanel.scrollIntoView({
     behavior: "smooth",
     block: "start"
   });
