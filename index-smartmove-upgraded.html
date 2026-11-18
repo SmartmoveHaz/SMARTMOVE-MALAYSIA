@@ -592,7 +592,63 @@ header {
   color: #075F59;
   cursor: pointer;
 }
+/* ===== KAD STESEN BERDEKATAN ===== */
 
+#nearbyStations .nearby-station-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #D5EAE6;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #FFFFFF, #F2FBF9);
+  box-shadow: 0 2px 7px #075F590D;
+}
+
+.nearby-station-name {
+  flex: 1 1 100%;
+  font-size: 13px;
+  font-weight: 700;
+  color: #18343B;
+}
+
+.nearby-station-type {
+  padding: 4px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.nearby-type-bus {
+  background: #E0F2FE;
+  color: #0369A1;
+}
+
+.nearby-type-ktm {
+  background: #FCE7F3;
+  color: #BE185D;
+}
+
+.nearby-type-rail {
+  background: #EDE9FE;
+  color: #6D28D9;
+}
+
+.nearby-type-other {
+  background: #E5E7EB;
+  color: #374151;
+}
+
+.nearby-station-distance {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: bold;
+  color: #087F78;
+}
 /* ===== KEMASAN RUANGAN LOKASI ===== */
 
 label[for="from"],
@@ -2719,11 +2775,36 @@ nearby.push({
           button.style.padding = "10px";
           button.style.textAlign = "left";
 
-          button.textContent =
-  stop.name + " (" + stop.transportType + ") — " +
-  (stop.distance < 1
+          button.className = "nearby-station-card";
+
+const stationName = document.createElement("span");
+stationName.className = "nearby-station-name";
+stationName.textContent = stop.name;
+
+const transportBadge = document.createElement("span");
+transportBadge.className = "nearby-station-type";
+transportBadge.textContent = stop.transportType;
+if (stop.transportType === "Bas") {
+  transportBadge.classList.add("nearby-type-bus");
+} else if (stop.transportType === "KTM") {
+  transportBadge.classList.add("nearby-type-ktm");
+} else if (stop.transportType === "LRT / MRT") {
+  transportBadge.classList.add("nearby-type-rail");
+} else {
+  transportBadge.classList.add("nearby-type-other");
+}
+const stationDistance = document.createElement("span");
+stationDistance.className = "nearby-station-distance";
+stationDistance.textContent =
+  stop.distance < 1
     ? Math.round(stop.distance * 1000) + " m"
-    : stop.distance.toFixed(2) + " km");
+    : stop.distance.toFixed(2) + " km";
+
+button.append(
+  stationName,
+  transportBadge,
+  stationDistance
+);
 
           button.addEventListener("click", () => {
             $("from").value = stop.name;
