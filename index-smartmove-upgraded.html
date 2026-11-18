@@ -1938,7 +1938,11 @@ function searchDirect(
     (data.frequencies || []).map(row=>row.trip_id)
   );
 
-  for(const [tripId,rows] of data.timesByTrip){
+  for(const tripId of (data.tripsByStop.get(start.stop_id) || [])){
+
+  const rows = data.timesByTrip.get(tripId);
+
+  if(!rows) continue;
 
     if(!serviceRuns(data,tripId,date)) continue;
 
