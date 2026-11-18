@@ -530,7 +530,26 @@ header {
 .header-menu-content button:active {
   background: #DDF8F3;
 }
+/* ===== BUTANG TERBALIKKAN LOKASI ===== */
 
+.swap-location-row {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+#swapLocations {
+  width: auto;
+  min-width: 145px;
+  padding: 9px 18px;
+  margin: 0;
+  border: 1px solid #087F78;
+  border-radius: 20px;
+  background: #DDF8F3;
+  color: #075F59;
+  font-size: 14px;
+  font-weight: bold;
+}
 </style>
 </head>
 
@@ -760,6 +779,12 @@ header {
   placeholder="Taip stesen atau hentian..."
   autocomplete="off">
 <div id="from-suggestions"></div>
+
+<div class="swap-location-row">
+  <button type="button" id="swapLocations">
+    ⇅ Terbalikkan
+  </button>
+</div>
 
 <label for="to">Ke</label>
 <input id="to" type="text"
@@ -2479,6 +2504,20 @@ tentangKamiButton.addEventListener("click", () => {
     behavior: "smooth",
     block: "start"
   });
+});
+/* ===== FUNGSI TERBALIKKAN LOKASI ===== */
+
+$("swapLocations").addEventListener("click", () => {
+  const fromInput = $("from");
+  const toInput = $("to");
+
+  const temp = fromInput.value;
+
+  fromInput.value = toInput.value;
+  toInput.value = temp;
+
+  $("from-suggestions").innerHTML = "";
+  $("to-suggestions").innerHTML = "";
 });
 /* PROSES CARIAN */
 
