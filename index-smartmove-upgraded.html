@@ -2192,24 +2192,32 @@ function showResult(item,index){
       <div class="result-title">
   ${routeText("transfer")}
 </div>
-      <div class="location-summary">
+      <div class="transfer-step">
+  <div class="transfer-step-icon">🟢</div>
+  <div class="transfer-step-content">
+    <span>LOKASI MULA</span>
+    <strong>${esc(stopLabel(item.data,item.boarding.stop_id))}</strong>
+    ${googleMapsButton(item.data.stopById.get(item.boarding.stop_id))}
+  </div>
+</div>
 
-        <p><b>🟢 LOKASI MULA</b><br>
-        ${esc(stopLabel(item.data,item.boarding.stop_id))}
-        ${googleMapsButton(item.data.stopById.get(item.boarding.stop_id))}
-        </p>
+<div class="transfer-step">
+  <div class="transfer-step-icon">🔄</div>
+  <div class="transfer-step-content">
+    <span>STESEN PERTUKARAN</span>
+    <strong>${esc(stopLabel(item.data,item.mid.stop_id))}</strong>
+    ${googleMapsButton(item.data.stopById.get(item.mid.stop_id))}
+  </div>
+</div>
 
-        <p><b>🟠 LOKASI PERTUKARAN</b><br>
-        ${esc(stopLabel(item.data,item.mid.stop_id))}
-        ${googleMapsButton(item.data.stopById.get(item.mid.stop_id))}
-        </p>
-
-        <p><b>🔴 DESTINASI AKHIR</b><br>
-        ${esc(stopLabel(item.data2,item.finalStop.stop_id))}
-        ${googleMapsButton(item.data2.stopById.get(item.finalStop.stop_id))}
-        </p>
-
-      </div>
+<div class="transfer-step">
+  <div class="transfer-step-icon">🔴</div>
+  <div class="transfer-step-content">
+    <span>DESTINASI AKHIR</span>
+    <strong>${esc(stopLabel(item.data2,item.finalStop.stop_id))}</strong>
+    ${googleMapsButton(item.data2.stopById.get(item.finalStop.stop_id))}
+  </div>
+</div>
       <div><b>${routeText("firstMap")}</b></div>
       <div class="route-map" id="transfer-map-1-${index}"></div>
 
