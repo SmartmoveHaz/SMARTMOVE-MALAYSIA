@@ -2065,13 +2065,19 @@ function showResult(item,index){
   ${esc(routeName(item.data,item.trip))}
 </p>
 
-<p><b>${routeText("departure")}:</b>
-  ${esc(item.a.departure_time || item.a.arrival_time || "-")}
-</p>
+<div class="journey-time-row">
+  <div class="journey-time-item">
+    <span>${routeText("departure")}</span>
+    <strong>${esc(item.a.departure_time || item.a.arrival_time || "-")}</strong>
+  </div>
 
-<p><b>${routeText("arrival")}:</b>
-  ${esc(item.b.arrival_time || item.b.departure_time || "-")}
-</p>
+  <div class="journey-time-line">→</div>
+
+  <div class="journey-time-item">
+    <span>${routeText("arrival")}</span>
+    <strong>${esc(item.b.arrival_time || item.b.departure_time || "-")}</strong>
+  </div>
+</div>
 
 <details>
   <summary>${routeText("viewStops")}</summary>
