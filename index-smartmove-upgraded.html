@@ -1234,7 +1234,22 @@ let loadingPromise = null;
 let lastSearchResults = null;
 
 const $ = id => document.getElementById(id);
+function safeStorageGet(key, fallback) {
+  try {
+    return localStorage.getItem(key) || fallback;
+  } catch (error) {
+    console.warn("Storage tidak tersedia:", error);
+    return fallback;
+  }
+}
 
+function safeStorageSet(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch (error) {
+    console.warn("Gagal menyimpan tetapan:", error);
+  }
+}
 const norm = value =>
   String(value || "")
     .normalize("NFD")
