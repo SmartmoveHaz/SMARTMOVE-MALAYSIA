@@ -2041,8 +2041,27 @@ function searchTransferAcrossDatasets(
 ){
 
   const output = [];
-  const starts = [];
-  const ends = [];
+const starts = [];
+const ends = [];
+
+const stopsByName = new Map();
+
+for (const data of allData) {
+  for (const stop of data.stops) {
+    const name = norm(stop.stop_name);
+
+    if (!name) continue;
+
+    if (!stopsByName.has(name)) {
+      stopsByName.set(name, []);
+    }
+
+    stopsByName.get(name).push({
+      data,
+      stop
+    });
+  }
+}
 
   for(const data of allData){
 
@@ -2105,9 +2124,13 @@ function searchTransferAcrossDatasets(
         for(const data2 of allData){
 
 
-          for(const transferStop of data2.stops){
+          for(const data2 of allData){
 
-            if(norm(transferStop.stop_name) !== midName) continue;
+  for(const match of (stopsByName.get(midName) || [])){
+
+    if(match.data !== data2) continue;
+
+    const transferStop = match.stop;
 
             const secondTripIds =
               data2.tripsByStop.get(transferStop.stop_id) || [];
