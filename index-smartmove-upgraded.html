@@ -2677,12 +2677,27 @@ $("findNearbyStations").addEventListener("click", () => {
             if (seen.has(key)) continue;
             seen.add(key);
 
-            nearby.push({
-              name: stop.stop_name,
-              distance: calculateDistance(
-                userLat, userLon, lat, lon
-              )
-            });
+            let transportType = "Pengangkutan";
+
+if (data.name === "KTMB") {
+  transportType = "KTM";
+} else if (data.name === "Rapid Rail KL") {
+  transportType = "LRT / MRT";
+} else if (
+  data.name.includes("Bus") ||
+  data.name.includes("Feeder") ||
+  data.name.startsWith("BAS.MY")
+) {
+  transportType = "Bas";
+}
+
+nearby.push({
+  name: stop.stop_name,
+  transportType: transportType,
+  distance: calculateDistance(
+    userLat, userLon, lat, lon
+  )
+});
           }
         }
 
@@ -2705,10 +2720,10 @@ $("findNearbyStations").addEventListener("click", () => {
           button.style.textAlign = "left";
 
           button.textContent =
-            stop.name + " — " +
-            (stop.distance < 1
-              ? Math.round(stop.distance * 1000) + " m"
-              : stop.distance.toFixed(2) + " km");
+  stop.name + " (" + stop.transportType + ") — " +
+  (stop.distance < 1
+    ? Math.round(stop.distance * 1000) + " m"
+    : stop.distance.toFixed(2) + " km");
 
           button.addEventListener("click", () => {
             $("from").value = stop.name;
