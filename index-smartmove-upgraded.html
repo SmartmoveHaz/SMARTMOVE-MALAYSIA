@@ -553,17 +553,21 @@ header {
 /* ===== STESEN BERDEKATAN ===== */
 
 .nearby-station-section {
-  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: 5px 0 10px;
 }
 
 #findNearbyStations {
-  width: 100%;
-  padding: 12px;
+  width: auto;
+  padding: 8px 14px;
+  margin: 0;
   border: 1px solid #087F78;
-  border-radius: 12px;
+  border-radius: 20px;
   background: #DDF8F3;
   color: #075F59;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   cursor: pointer;
 }
@@ -811,8 +815,8 @@ header {
 <div id="from-suggestions"></div>
 <div class="nearby-station-section">
   <button type="button" id="findNearbyStations">
-    📍 Cari Stesen Terdekat
-  </button>
+  📍 Gunakan lokasi saya
+</button>
 
   <div id="nearbyStations"></div>
 </div>
