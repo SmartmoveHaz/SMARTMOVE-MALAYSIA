@@ -2121,16 +2121,10 @@ for (const data of allData) {
 
         if(arrival === null) continue;
 
-        for(const data2 of allData){
+        for(const match of (stopsByName.get(midName) || [])){
 
-
-          for(const data2 of allData){
-
-  for(const match of (stopsByName.get(midName) || [])){
-
-    if(match.data !== data2) continue;
-
-    const transferStop = match.stop;
+  const data2 = match.data;
+  const transferStop = match.stop;
 
             const secondTripIds =
               data2.tripsByStop.get(transferStop.stop_id) || [];
