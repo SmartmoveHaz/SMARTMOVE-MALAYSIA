@@ -550,6 +550,36 @@ header {
   font-size: 14px;
   font-weight: bold;
 }
+/* ===== STESEN BERDEKATAN ===== */
+
+.nearby-station-section {
+  margin: 10px 0;
+}
+
+#findNearbyStations {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #087F78;
+  border-radius: 12px;
+  background: #DDF8F3;
+  color: #075F59;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#nearbyStations {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+#nearbyStations button {
+  border: 1px solid #d1e5e2;
+  border-radius: 10px;
+  background: white;
+  color: #075F59;
+  cursor: pointer;
+}
 </style>
 </head>
 
@@ -779,7 +809,13 @@ header {
   placeholder="Taip stesen atau hentian..."
   autocomplete="off">
 <div id="from-suggestions"></div>
+<div class="nearby-station-section">
+  <button type="button" id="findNearbyStations">
+    📍 Cari Stesen Terdekat
+  </button>
 
+  <div id="nearbyStations"></div>
+</div>
 <div class="swap-location-row">
   <button type="button" id="swapLocations">
     ⇅ Terbalikkan
@@ -2519,6 +2555,138 @@ $("swapLocations").addEventListener("click", () => {
   $("from-suggestions").innerHTML = "";
   $("to-suggestions").innerHTML = "";
 });
+
+/* ===== CARI STESEN BERDEKATAN ===== */
+
+$("findNearbyStations").addEventListener("click", () => {
+
+  const output = $("nearbyStations");
+
+  if (!navigator.geolocation) {
+    output.textContent =
+      "Telefon anda tidak menyokong fungsi lokasi GPS.";
+    return;
+  }
+
+  output.textContent = "Mendapatkan lokasi anda...";
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+
+      try {
+        output.textContent = "Sedang mencari stesen berdekatan...";
+
+        await loadData();
+
+        const userLat = position.coords.latitude;
+        const userLon = position.coords.longitude;
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+          const R = 6371;
+          const rad = value => value * Math.PI / 180;
+
+          const dLat = rad(lat2 - lat1);
+          const dLon = rad(lon2 - lon1);
+
+          const a =
+            Math.sin(dLat / 2) ** 2 +
+            Math.cos(rad(lat1)) *
+            Math.cos(rad(lat2)) *
+            Math.sin(dLon / 2) ** 2;
+
+          return R * 2 * Math.atan2(
+            Math.sqrt(a),
+            Math.sqrt(1 - a)
+          );
+        }
+
+        const nearby = [];
+        const seen = new Set();
+
+        for (const data of datasets) {
+          for (const stop of data.stops) {
+
+            if (!hasValidCoordinates(stop)) continue;
+
+            const lat = Number(stop.stop_lat);
+            const lon = Number(stop.stop_lon);
+
+            const key =
+              norm(stop.stop_name) + "|" +
+              lat.toFixed(5) + "|" +
+              lon.toFixed(5);
+
+            if (seen.has(key)) continue;
+            seen.add(key);
+
+            nearby.push({
+              name: stop.stop_name,
+              distance: calculateDistance(
+                userLat, userLon, lat, lon
+              )
+            });
+          }
+        }
+
+        nearby.sort((a, b) => a.distance - b.distance);
+
+        output.innerHTML = "";
+
+        const heading = document.createElement("p");
+        heading.textContent = "Stesen paling hampir dengan anda:";
+        output.appendChild(heading);
+
+        nearby.slice(0, 5).forEach(stop => {
+
+          const button = document.createElement("button");
+          button.type = "button";
+          button.style.display = "block";
+          button.style.width = "100%";
+          button.style.margin = "6px 0";
+          button.style.padding = "10px";
+          button.style.textAlign = "left";
+
+          button.textContent =
+            stop.name + " — " +
+            (stop.distance < 1
+              ? Math.round(stop.distance * 1000) + " m"
+              : stop.distance.toFixed(2) + " km");
+
+          button.addEventListener("click", () => {
+            $("from").value = stop.name;
+            $("from-suggestions").innerHTML = "";
+            output.innerHTML = "";
+          });
+
+          output.appendChild(button);
+        });
+
+        if (!nearby.length) {
+          output.textContent =
+            "Tiada stesen dengan koordinat GPS yang sah ditemui.";
+        }
+
+      } catch (error) {
+        output.textContent =
+          "Gagal mencari stesen. Sila cuba lagi.";
+      }
+
+    },
+
+    () => {
+      output.textContent =
+        "Lokasi tidak dapat diakses. Sila benarkan kebenaran lokasi pada telefon anda.";
+    },
+
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 60000
+    }
+  );
+
+});
+
 /* PROSES CARIAN */
 
 $("search").addEventListener("click",async()=>{
