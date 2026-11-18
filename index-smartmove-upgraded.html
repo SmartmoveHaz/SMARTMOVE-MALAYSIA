@@ -2262,9 +2262,10 @@ function showResult(item,index){
   ${esc(transferDeparture)}
 </p>
 
-<p><b>${routeText("waiting")}:</b>
+<div class="transfer-wait">
+  ⏳ ${routeText("waiting")}:
   ${waitingMinutes} ${routeText("minutes")}
-</p>
+</div>
 
 <p><b>${routeText("destinationArrival")}:</b>
   ${esc(item.finalStop.arrival_time || item.finalStop.departure_time || "-")}
