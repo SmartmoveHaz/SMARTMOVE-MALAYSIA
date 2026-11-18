@@ -610,6 +610,48 @@ header {
     digunakan.
   </p>
 </div>
+<div id="perkhidmatanPanel" class="info-panel" hidden>
+  <button type="button" id="closePerkhidmatan">✕ Tutup</button>
+
+  <h2>🚌 Perkhidmatan Pengangkutan</h2>
+
+  <p>
+    SMARTMOVE menyasarkan integrasi pelbagai pilihan
+    pengangkutan di seluruh Malaysia.
+  </p>
+
+  <h3>🚍 Pengangkutan Awam</h3>
+  <ul>
+    <li>Bas</li>
+    <li>LRT</li>
+    <li>MRT</li>
+    <li>KTM Komuter</li>
+    <li>ETS dan tren antara bandar</li>
+  </ul>
+
+  <h3>🚕 Pengangkutan Darat</h3>
+  <ul>
+    <li>Teksi</li>
+    <li>E-hailing</li>
+  </ul>
+
+  <h3>⛴️ Pengangkutan Air</h3>
+  <ul>
+    <li>Feri</li>
+    <li>Bot penumpang</li>
+  </ul>
+
+  <h3>✈️ Pengangkutan Udara</h3>
+  <ul>
+    <li>Penerbangan domestik</li>
+    <li>Penerbangan antarabangsa</li>
+  </ul>
+
+  <p class="small">
+    Integrasi perkhidmatan akan dibangunkan secara berperingkat.
+    Tidak semua kategori tersedia untuk carian perjalanan buat masa ini.
+  </p>
+</div>
 <main>
 
 <section class="card">
@@ -2309,6 +2351,27 @@ profilButton.addEventListener("click", () => {
   document.querySelector(".header-menu").removeAttribute("open");
 
   profilPanel.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+});
+/* ===== PAPARAN PERKHIDMATAN PENGANGKUTAN ===== */
+
+const perkhidmatanButton =
+  document.querySelectorAll(".header-menu-content button")[2];
+
+const perkhidmatanPanel = $("perkhidmatanPanel");
+
+$("closePerkhidmatan").addEventListener("click", () => {
+  perkhidmatanPanel.hidden = true;
+});
+
+perkhidmatanButton.addEventListener("click", () => {
+  perkhidmatanPanel.hidden = false;
+
+  document.querySelector(".header-menu").removeAttribute("open");
+
+  perkhidmatanPanel.scrollIntoView({
     behavior: "smooth",
     block: "start"
   });
