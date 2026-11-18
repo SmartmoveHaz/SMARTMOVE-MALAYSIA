@@ -1136,6 +1136,30 @@ label[for="time"] {
 </main>
 
 <script>
+
+window.addEventListener("error", (event) => {
+  const status = document.getElementById("status");
+
+  if (status) {
+    status.textContent =
+      "Ralat JavaScript: " + event.message;
+  }
+
+  console.error("SMARTMOVE ERROR:", event.error);
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+  const status = document.getElementById("status");
+
+  if (status) {
+    status.textContent =
+      "Ralat proses: " +
+      (event.reason?.message || String(event.reason));
+  }
+
+  console.error("SMARTMOVE PROMISE ERROR:", event.reason);
+});
+
 "use strict";
 
 /* SUMBER DATA PENGANGKUTAN */
