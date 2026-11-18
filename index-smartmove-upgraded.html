@@ -2333,8 +2333,11 @@ function showResult(item,index){
     </div>
   </div>
 </div>
-  ${esc(item.finalStop.arrival_time || item.finalStop.departure_time || "-")}
-</p>
+  <div><b>${routeText("firstMap")}</b></div>
+<div class="route-map" id="transfer-map-1-${index}"></div>
+
+<div><b>${routeText("secondMap")}</b></div>
+<div class="route-map" id="transfer-map-2-${index}"></div>
 
 <details>
   <summary>${routeText("viewStops")}</summary>
