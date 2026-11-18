@@ -1523,9 +1523,32 @@ async function loadData(){
     $("status").textContent =
       "Memuat turun jadual pengangkutan. Sila tunggu...";
 
-    const settled = await Promise.allSettled(
-      FEEDS.map(loadFeed)
-    );
+    const settled = new Array(FEEDS.length);
+let nextFeedIndex = 0;
+
+const worker = async () => {
+  while (true) {
+    const index = nextFeedIndex++;
+
+    if (index >= FEEDS.length) return;
+
+    try {
+      settled[index] = {
+        status: "fulfilled",
+        value: await loadFeed(FEEDS[index])
+      };
+    } catch (reason) {
+      settled[index] = {
+        status: "rejected",
+        reason
+      };
+    }
+  }
+};
+
+await Promise.all(
+  Array.from({ length: 3 }, () => worker())
+);
 
     datasets = settled
       .filter(item => item.status === "fulfilled")
