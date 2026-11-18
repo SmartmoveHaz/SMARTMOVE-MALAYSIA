@@ -1341,7 +1341,7 @@ if (lastSearchResults !== null) {
   renderSearchResults();
 }
   document.documentElement.lang = language;
-  localStorage.setItem("smartmove-language", language);
+  safeStorageSet("smartmove-language", language);
 }
 
 /* ===== TERJEMAHAN KEPUTUSAN LALUAN ===== */
@@ -1415,7 +1415,7 @@ languageSelect.addEventListener("change", () => {
 });
 
 const savedLanguage =
-  localStorage.getItem("smartmove-language") || "ms";
+  safeStorageGet("smartmove-language", "ms");
 
 languageSelect.value = savedLanguage;
 applyLanguage(savedLanguage);
