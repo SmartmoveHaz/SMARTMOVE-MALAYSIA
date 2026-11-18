@@ -2503,8 +2503,6 @@ function googleMapsButton(stop){
 }
 
 
-function renderRouteMap(item,index){
-  
 function runMapWhenVisible(mapElement, renderCallback) {
 
   if (mapElement.dataset.mapReady === "true") {
@@ -2523,29 +2521,26 @@ function runMapWhenVisible(mapElement, renderCallback) {
   mapElement.dataset.mapQueued = "true";
 
   const observer = new IntersectionObserver(entries => {
-
     for (const entry of entries) {
-
       if (entry.isIntersecting) {
-
         observer.disconnect();
-
         mapElement.dataset.mapQueued = "false";
         mapElement.dataset.mapReady = "true";
-
         renderCallback();
         break;
       }
     }
-
   }, {
     rootMargin: "160px"
   });
 
   observer.observe(mapElement);
-
   return false;
 }
+
+function renderRouteMap(item,index){
+  
+
 
   const mapElement = document.getElementById(
     "route-map-" + index
