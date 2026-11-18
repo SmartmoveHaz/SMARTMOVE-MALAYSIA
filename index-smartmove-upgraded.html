@@ -2646,7 +2646,14 @@ function renderTransferMap(data,trip,startStop,endStop,mapId){
 
   const mapElement = document.getElementById(mapId);
 
-  if(!mapElement || !window.L) return;
+  if(!mapElement) return;
+
+if (!runMapWhenVisible(
+  mapElement,
+  () => renderTransferMap(data,trip,startStop,endStop,mapId)
+)) return;
+
+if(!window.L) return;
 
   const rows = getStopSequence(data,trip.trip_id);
 
