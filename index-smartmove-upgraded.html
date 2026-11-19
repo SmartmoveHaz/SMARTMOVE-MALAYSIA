@@ -2012,8 +2012,7 @@ for (const frequency of (data.frequencies || [])) {
 
     if(baseStart===null || baseA===null || baseB===null) continue;
 
-    const frequencies = (data.frequencies || [])
-      .filter(row=>row.trip_id===tripId);
+    const frequencies = frequenciesByTrip.get(tripId) || [];
 
     const departures = [];
 
