@@ -2222,10 +2222,7 @@ const waitingTime = nextDeparture - arrival;
               const finalIndex = secondRows.findIndex(
                 (row,index) =>
                   index > transferIndex &&
-                  ends.some(item =>
-                    item.data === data2 &&
-                    item.stop.stop_id === row.stop_id
-                  )
+                  endStopIdsByData.get(data2)?.has(row.stop_id)
               );
 
               if(finalIndex < 0) continue;
