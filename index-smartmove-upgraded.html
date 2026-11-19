@@ -1973,9 +1973,15 @@ function searchDirect(
     return [h,m,s].map(v=>String(v).padStart(2,"0")).join(":");
   };
 
-  const frequencyTrips = new Set(
-    (data.frequencies || []).map(row=>row.trip_id)
-  );
+  const frequenciesByTrip = new Map();
+
+for (const frequency of (data.frequencies || [])) {
+  if (!frequenciesByTrip.has(frequency.trip_id)) {
+    frequenciesByTrip.set(frequency.trip_id, []);
+  }
+
+  frequenciesByTrip.get(frequency.trip_id).push(frequency);
+}
 
   for(const tripId of (data.tripsByStop.get(start.stop_id) || [])){
 
