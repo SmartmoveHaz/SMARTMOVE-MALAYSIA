@@ -2111,16 +2111,22 @@ for (const data of allData) {
   }
 }
 
-  for(const data of allData){
+  const endStopIdsByData = new Map();
 
-    for(const stop of findStops(data,from)){
-      starts.push({data,stop});
-    }
+for (const data of allData) {
+  const destinationStops = findStops(data, to);
+  const stopIds = new Set(destinationStops.map(stop => stop.stop_id));
 
-    for(const stop of findStops(data,to)){
-      ends.push({data,stop});
-    }
+  endStopIdsByData.set(data, stopIds);
+
+  for (const stop of findStops(data, from)) {
+    starts.push({data, stop});
   }
+
+  for (const stop of destinationStops) {
+    ends.push({data, stop});
+  }
+}
 
   for(const first of starts){
 
