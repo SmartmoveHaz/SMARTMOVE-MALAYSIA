@@ -3565,10 +3565,12 @@ $("mapDiagnostics").appendChild(diagnosticPanel);
 $("mapDiagnostics").appendChild(nearbySummary);
 
 renderNearbyMap(userLat, userLon, nearby);
-        renderNearbyStationsList(nearby);
-          output.textContent =
-            "Tiada stesen dengan koordinat GPS yang sah ditemui.";
-        }
+renderNearbyStationsList(nearby);
+
+if (!nearby.length) {
+  output.textContent =
+    "Tiada stesen dengan koordinat GPS yang sah ditemui.";
+}
 
       } catch (error) {
         output.textContent =
