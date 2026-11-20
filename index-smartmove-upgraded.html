@@ -3302,6 +3302,12 @@ const profilPanel = $("profilPanel");
 
 $("closeProfil").addEventListener("click", () => {
   profilPanel.hidden = true;
+  document.querySelector("main").hidden = false;
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 });
 
 profilButton.addEventListener("click", () => {
