@@ -1368,6 +1368,7 @@ const FEEDS = [
 let datasets = [];
 let loadingPromise = null;
 let lastSearchResults = null;
+let transferStopsByName = new Map();
 
 const $ = id => document.getElementById(id);
 function safeStorageGet(key, fallback) {
@@ -1750,7 +1751,24 @@ await Promise.all(
     datasets = settled
       .filter(item => item.status === "fulfilled")
       .map(item => item.value);
+transferStopsByName = new Map();
 
+for (const data of datasets) {
+  for (const stop of data.stops) {
+    const name = norm(stop.stop_name);
+
+    if (!name) continue;
+
+    if (!transferStopsByName.has(name)) {
+      transferStopsByName.set(name, []);
+    }
+
+    transferStopsByName.get(name).push({
+      data,
+      stop
+    });
+  }
+}
     const failed = settled.filter(
       item => item.status === "rejected"
     );
@@ -2237,25 +2255,6 @@ function searchTransferAcrossDatasets(
   const output = [];
 const starts = [];
 const ends = [];
-
-const stopsByName = new Map();
-
-for (const data of allData) {
-  for (const stop of data.stops) {
-    const name = norm(stop.stop_name);
-
-    if (!name) continue;
-
-    if (!stopsByName.has(name)) {
-      stopsByName.set(name, []);
-    }
-
-    stopsByName.get(name).push({
-      data,
-      stop
-    });
-  }
-}
 
   const endStopIdsByData = new Map();
 
