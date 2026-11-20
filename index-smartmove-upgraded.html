@@ -1761,11 +1761,9 @@ function serviceRuns(data,tripId,date){
   const serviceId = trip.service_id;
   const dateKey = date.replace(/-/g,"");
 
-  const exception = data.exceptions.find(
-    row =>
-      row.service_id === serviceId &&
-      row.date === dateKey
-  );
+  const exception = data.exceptionsByServiceDate.get(
+  serviceId + "|" + dateKey
+);
 
   if(exception){
     return exception.exception_type === "1";
