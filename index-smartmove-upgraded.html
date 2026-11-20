@@ -978,7 +978,47 @@ label[for="time"] {
     padding: 12px;
   }
 }
+/* ===== SMARTMOVE BOTTOM NAVIGATION ===== */
 
+.bottom-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: #082B3A;
+  padding: 9px 5px calc(9px + env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 18px #00000020;
+  z-index: 9999;
+}
+
+.bottom-navigation button {
+  margin: 0;
+  padding: 8px 2px;
+  background: transparent;
+  color: #B7D9DE;
+  border: 0;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+}
+
+.bottom-navigation button.active {
+  color: #5CE8DC;
+  background: #ffffff12;
+}
+
+.bottom-navigation button span {
+  font-size: 21px;
+}
+
+body {
+  padding-bottom: 90px;
+}
 </style>
 </head>
 
@@ -3478,6 +3518,119 @@ loadData().catch(error=>{
   $("status").textContent =
     "Gagal memuatkan senarai hentian: " + error.message;
 });
+/* ===== SMARTMOVE BOTTOM NAVIGATION ===== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const navButtons = document.querySelectorAll(
+    ".bottom-navigation button"
+  );
+
+  function setActive(button) {
+    navButtons.forEach(item => {
+      item.classList.remove("active");
+    });
+
+    button.classList.add("active");
+  }
+
+  navButtons.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      setActive(button);
+
+      const status = document.getElementById("status");
+
+      if (button.id === "navSearch") {
+        document.getElementById("from").scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+
+      else if (button.id === "navMap") {
+        const maps = [...document.querySelectorAll(".route-map")];
+
+        const visibleMap = maps.find(map =>
+          map.getClientRects().length > 0
+        );
+
+        if (visibleMap) {
+          visibleMap.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        } else {
+          status.textContent =
+            "Buat carian dan buka butiran perjalanan untuk melihat peta.";
+          document.getElementById("results").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }
+      }
+
+      else if (button.id === "navSchedule") {
+        document.getElementById("date").scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+
+      else if (button.id === "navSaved") {
+        status.textContent =
+          "Fungsi laluan disimpan akan dibangunkan dalam langkah seterusnya.";
+        document.getElementById("results").scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+
+      else if (button.id === "navProfile") {
+        const panel = document.getElementById("profilPanel");
+        panel.hidden = false;
+        panel.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+
+    });
+
+  });
+
+});
 </script>
+<!-- SMARTMOVE BOTTOM NAVIGATION -->
+
+<nav class="bottom-navigation" aria-label="Navigasi utama">
+
+  <button type="button" id="navSearch" class="active">
+    <span>🔎</span>
+    Carian
+  </button>
+
+  <button type="button" id="navMap">
+    <span>🗺️</span>
+    Peta
+  </button>
+
+  <button type="button" id="navSchedule">
+    <span>📅</span>
+    Jadual
+  </button>
+
+  <button type="button" id="navSaved">
+    <span>🔖</span>
+    Disimpan
+  </button>
+
+  <button type="button" id="navProfile">
+    <span>👤</span>
+    Profil
+  </button>
+
+</nav>
 </body>
 </html>
