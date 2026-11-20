@@ -3872,86 +3872,55 @@ $("swapLocations").addEventListener("click", () => {
 /* ===== PAPAR PETA STESEN BERDEKATAN ===== */
 function renderNearbyStationsList(nearby) {
   const output = $("nearbyStations");
-  const filterElement = $("nearbyTransportFilter");
-
-  if (!output) return;
-
-  const selectedType = filterElement
-    ? filterElement.value
-    : "Semua";
-
-  const filtered = selectedType === "Semua"
-    ? nearby
-    : nearby.filter(
-        stop => stop.transportType === selectedType
-      );
-
-  output.innerHTML = "";
-
-  const heading = document.createElement("p");
-  heading.textContent =
-    "Hentian berdekatan (" + filtered.length + "):";
-  output.appendChild(heading);
-
-  filtered.slice(0, 5).forEach(stop => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "nearby-station-card";
-
-    const name = document.createElement("span");
-    name.className = "nearby-station-name";
-    name.textContent = stop.name;
-
-    const type = document.createElement("span");
-    type.className = "nearby-station-type";
-    type.textContent = stop.transportType;
-
-    const distance = document.createElement("span");
-    distance.className = "nearby-station-distance";
-    distance.textContent = stop.distance < 1
-      ? Math.round(stop.distance * 1000) + " m"
-      : stop.distance.toFixed(2) + " km";
-
-    button.append(name, type, distance);
-
-    button.addEventListener("click", () => {
-      $("from").value = stop.name;
-      $("from-suggestions").innerHTML = "";
-      output.innerHTML = "";
-    });
-
-    output.appendChild(button);
-  });
-
-  if (!filtered.length) {
-    output.textContent =
-      "Tiada hentian bagi kategori ini berdekatan.";
-  }
-}
-function renderNearbyMap(userLat, userLon, nearby) {
-
-  const mapElement = $("nearbyMap");
-
-  if (!mapElement || !window.L) {
-    return;
-  }
+  
 const filterElement = $("nearbyTransportFilter");
 
 const selectedType = filterElement
   ? filterElement.value
   : "Semua";
 
-const filteredNearby = selectedType === "Semua"
-  ? nearby
-  : nearby.filter(
-      stop => stop.transportType === selectedType
+const busLayer = $("layerBus");
+const railLayer = $("layerRail");
+
+const showBus = busLayer ? busLayer.checked : true;
+const showRail = railLayer ? railLayer.checked : true;
+
+const filteredNearby = nearby.filter(stop => {
+  const matchesTransport =
+    selectedType === "Semua" ||
+    stop.transportType === selectedType;
+
+  const matchesLayer =
+    (stop.transportType === "Bas" && showBus) ||
+    (
+      ["KTM", "LRT / MRT"].includes(stop.transportType) &&
+      showRail
+    ) ||
+    (
+      stop.transportType === "Pengangkutan" &&
+      showBus &&
+      showRail
     );
+
+  return matchesTransport && matchesLayer;
+});
 
 if (filterElement) {
   filterElement.onchange = () => {
     renderNearbyMap(userLat, userLon, nearby);
     renderNearbyStationsList(nearby);
   };
+}
+
+[busLayer, railLayer].forEach(layer => {
+  if (layer) {
+    layer.onchange = () => {
+      renderNearbyMap(userLat, userLon, nearby);
+      renderNearbyStationsList(nearby);
+    };
+  }
+});
+
 }
   mapElement.style.display = "block";
 
