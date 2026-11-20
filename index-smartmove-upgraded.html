@@ -4072,13 +4072,7 @@ const nearbyTypeCounts = nearby.reduce((counts, stop) => {
   return counts;
 }, {});
 
-const nearbySummary = document.createElement("p");
 
-nearbySummary.textContent =
-  "Hentian berdekatan mengikut kategori: " +
-  Object.entries(nearbyTypeCounts)
-    .map(([type, count]) => `${type}: ${count}`)
-    .join(" | ");
 
 
 /* PAPAR DIAGNOSTIK DATA PREMIUM */
