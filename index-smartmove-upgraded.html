@@ -3998,7 +3998,18 @@ function renderNearbyMap(userLat, userLon, nearby) {
 
   const busLayer = $("layerBus");
 const railLayer = $("layerRail");
+const radiusLayer = $("layerRadius");
+const radiusSelect = $("radiusDistance");
 
+const showRadius = radiusLayer
+  ? radiusLayer.checked
+  : false;
+
+const radiusMeters = radiusSelect
+  ? Number(radiusSelect.value)
+  : 1000;
+
+const radiusKm = radiusMeters / 1000;
 const showBus = busLayer ? busLayer.checked : true;
 const showRail = railLayer ? railLayer.checked : true;
 
