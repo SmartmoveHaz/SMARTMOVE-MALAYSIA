@@ -4051,7 +4051,15 @@ const filteredNearby = nearby.filter(stop => {
   );
 
   window.smartmoveNearbyMap = map;
-
+if (showRadius) {
+  L.circle([userLat, userLon], {
+    radius: radiusMeters,
+    color: "#1677FF",
+    weight: 2,
+    fillColor: "#1677FF",
+    fillOpacity: 0.08
+  }).addTo(map);
+}
   L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
