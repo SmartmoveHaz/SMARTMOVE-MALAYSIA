@@ -3657,22 +3657,30 @@ document.addEventListener("DOMContentLoaded", () => {
       const status = document.getElementById("status");
 
       if (button.id === "navSearch") {
-        document.getElementById("from").scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
-      }
+
+  $("mapPage").hidden = true;
+
+  document.querySelector("main").hidden = false;
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+}
 
       else if (button.id === "navMap") {
 
+  document.querySelector("main").hidden = true;
+
+  $("mapPage").hidden = false;
+
   $("findNearbyStations").click();
 
-  setTimeout(() => {
-    $("nearbyMap").scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
-  }, 500);
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 
 }
 
