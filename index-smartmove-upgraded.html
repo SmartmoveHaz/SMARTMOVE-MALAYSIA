@@ -1336,7 +1336,30 @@ body {
   <option value="KTM">🚆 KTM sahaja</option>
   <option value="LRT / MRT">🚇 LRT / MRT sahaja</option>
 </select>
+<div id="smartLayersPanel" class="smart-layers-panel">
+  <h3>✨ Smart Layers</h3>
+  <p>Pilih maklumat yang mahu dipaparkan pada peta.</p>
 
+  <label>
+    <input type="checkbox" id="layerBus" checked>
+    🚌 Lokasi bas
+  </label>
+
+  <label>
+    <input type="checkbox" id="layerRail" checked>
+    🚆 KTM / LRT / MRT
+  </label>
+
+  <label>
+    <input type="checkbox" id="layerRadius">
+    📍 Kawasan sekitar saya
+  </label>
+
+  <label>
+    <input type="checkbox" id="layerInterchange">
+    🔄 Stesen pertukaran
+  </label>
+</div>
 <div id="mapDiagnostics"></div>
   <div id="nearbyStations"></div>
 
