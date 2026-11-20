@@ -4080,34 +4080,87 @@ nearbySummary.textContent =
     .map(([type, count]) => `${type}: ${count}`)
     .join(" | ");
 
-/* PAPAR DIAGNOSTIK DATA */
 
-const diagnosticPanel = document.createElement("details");
+/* PAPAR DIAGNOSTIK DATA PREMIUM */
 
-const diagnosticTitle = document.createElement("summary");
-diagnosticTitle.textContent = "Semakan data pengangkutan";
+const diagnosticPanel = document.createElement("section");
+diagnosticPanel.className = "premium-diagnostics-card";
 
-diagnosticPanel.appendChild(diagnosticTitle);
+const diagnosticHeader = document.createElement("div");
+diagnosticHeader.className = "premium-diagnostics-header";
+
+const diagnosticHeading = document.createElement("div");
+
+const diagnosticEyebrow = document.createElement("span");
+diagnosticEyebrow.className = "premium-diagnostics-eyebrow";
+diagnosticEyebrow.textContent = "DATA MONITORING";
+
+const diagnosticTitle = document.createElement("h3");
+diagnosticTitle.textContent = "Semakan Data Pengangkutan";
+
+diagnosticHeading.append(diagnosticEyebrow, diagnosticTitle);
+
+const diagnosticIcon = document.createElement("span");
+diagnosticIcon.className = "premium-diagnostics-icon";
+diagnosticIcon.textContent = "✦";
+
+diagnosticHeader.append(diagnosticHeading, diagnosticIcon);
+diagnosticPanel.appendChild(diagnosticHeader);
+
+const diagnosticRows = document.createElement("div");
+diagnosticRows.className = "premium-diagnostics-rows";
 
 for (const data of datasets) {
   const validCount = data.stops.filter(
     stop => hasValidCoordinates(stop)
   ).length;
 
-  const row = document.createElement("p");
+  const row = document.createElement("div");
+  row.className = "premium-diagnostic-row";
 
-  row.textContent =
-    data.name + ": " +
-    validCount + "/" +
-    data.stops.length +
-    " hentian mempunyai koordinat GPS";
+  const operatorName = document.createElement("span");
+  operatorName.textContent = data.name;
 
-  diagnosticPanel.appendChild(row);
+  const operatorCount = document.createElement("strong");
+  operatorCount.textContent =
+    validCount.toLocaleString("ms-MY") + " / " +
+    data.stops.length.toLocaleString("ms-MY");
+
+  row.append(operatorName, operatorCount);
+  diagnosticRows.appendChild(row);
 }
 
+diagnosticPanel.appendChild(diagnosticRows);
+
+const diagnosticNote = document.createElement("p");
+diagnosticNote.className = "premium-diagnostics-note";
+diagnosticNote.textContent =
+  "Jumlah hentian yang mempunyai koordinat GPS yang sah.";
+
+diagnosticPanel.appendChild(diagnosticNote);
+
+const nearbySummary = document.createElement("div");
+nearbySummary.className = "premium-nearby-summary";
+
+const nearbyTitle = document.createElement("strong");
+nearbyTitle.textContent = "Hentian Berdekatan";
+
+const nearbyText = document.createElement("p");
+nearbyText.textContent =
+  Object.entries(nearbyTypeCounts)
+    .map(([type, count]) =>
+      type + ": " + count.toLocaleString("ms-MY")
+    )
+    .join("  ·  ");
+
+nearbySummary.append(nearbyTitle, nearbyText);
+
 $("mapDiagnostics").innerHTML = "";
-$("mapDiagnostics").appendChild(diagnosticPanel);
-$("mapDiagnostics").appendChild(nearbySummary);
+$("mapDiagnostics").append(
+  diagnosticPanel,
+  nearbySummary
+);
+
 
 renderNearbyMap(userLat, userLon, nearby);
 renderNearbyStationsList(nearby);
