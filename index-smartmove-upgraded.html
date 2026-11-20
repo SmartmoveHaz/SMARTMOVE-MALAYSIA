@@ -3448,44 +3448,7 @@ sortJourneyResults(all);
 all = all.slice(0,10);
 lastSearchResults = all;
 
-
-
-
-    results.innerHTML = all.length
-  ? all.map((item,index)=>showResult(item,index)).join("")
-      : routeText("noRoutes");
-if(all.length){
-  all.forEach((item,index)=>{
-    if(item.type === "direct"){
-      renderRouteMap(item,index);
-
-    } else if(item.type === "transfer"){
-      renderTransferMap(
-        item.data,
-        item.t1,
-        item.boarding,
-        item.mid,
-        "transfer-map-1-"+index
-      );
-
-      renderTransferMap(
-        item.data2,
-        item.t2,
-        item.transfer,
-        item.finalStop,
-        "transfer-map-2-"+index
-      );
-    }
-  });
-}
-    
-
-
-
-
-
-
-
+renderSearchResults();
 
   }catch(error){
 
