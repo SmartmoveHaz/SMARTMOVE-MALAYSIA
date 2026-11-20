@@ -3402,7 +3402,8 @@ nearby.push({
         }
 
         nearby.sort((a, b) => a.distance - b.distance);
-        const nearbyTypeCounts = nearby.reduce((counts, stop) => {
+        
+const nearbyTypeCounts = nearby.reduce((counts, stop) => {
   counts[stop.transportType] =
     (counts[stop.transportType] || 0) + 1;
 
@@ -3417,7 +3418,35 @@ nearbySummary.textContent =
     .map(([type, count]) => `${type}: ${count}`)
     .join(" | ");
 
+/* PAPAR DIAGNOSTIK DATA */
+
+const diagnosticPanel = document.createElement("details");
+
+const diagnosticTitle = document.createElement("summary");
+diagnosticTitle.textContent = "Semakan data pengangkutan";
+
+diagnosticPanel.appendChild(diagnosticTitle);
+
+for (const data of datasets) {
+  const validCount = data.stops.filter(
+    stop => hasValidCoordinates(stop)
+  ).length;
+
+  const row = document.createElement("p");
+
+  row.textContent =
+    data.name + ": " +
+    validCount + "/" +
+    data.stops.length +
+    " hentian mempunyai koordinat GPS";
+
+  diagnosticPanel.appendChild(row);
+}
+
+$("mapDiagnostics").innerHTML = "";
+$("mapDiagnostics").appendChild(diagnosticPanel);
 $("mapDiagnostics").appendChild(nearbySummary);
+
 renderNearbyMap(userLat, userLon, nearby);
         output.innerHTML = "";
 /* ===== DIAGNOSTIK DATA PENGANGKUTAN ===== */
