@@ -4010,7 +4010,7 @@ const filteredNearby = nearby.filter(stop => {
 
   return matchesTransport && matchesRadius;
 });
-[busLayer, railLayer].forEach(layer => {
+[busLayer, railLayer, radiusLayer, radiusSelect].forEach(layer => {
   if (layer) {
     layer.onchange = () => {
       renderNearbyMap(userLat, userLon, nearby);
