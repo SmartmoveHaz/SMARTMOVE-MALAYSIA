@@ -1771,9 +1771,7 @@ function serviceRuns(data,tripId,date){
     return exception.exception_type === "1";
   }
 
-  const calendar = data.calendar.find(
-    row => row.service_id === serviceId
-  );
+  const calendar = data.calendarByService.get(serviceId);
 
   if(!calendar){
     return data.calendar.length === 0 &&
