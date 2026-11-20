@@ -3986,8 +3986,12 @@ $("mapPage").hidden = false;
       }
 
       else if (button.id === "navProfile") {
-        const panel = document.getElementById("profilPanel");
-        panel.hidden = false;
+  document.querySelector("main").hidden = true;
+  $("mapPage").hidden = true;
+  $("savedPage").hidden = true;
+
+  const panel = document.getElementById("profilPanel");
+  panel.hidden = false;
         panel.scrollIntoView({
           behavior: "smooth",
           block: "start"
