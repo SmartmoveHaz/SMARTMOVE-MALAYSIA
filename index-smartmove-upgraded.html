@@ -3404,7 +3404,33 @@ nearby.push({
         nearby.sort((a, b) => a.distance - b.distance);
 renderNearbyMap(userLat, userLon, nearby);
         output.innerHTML = "";
+/* ===== DIAGNOSTIK DATA PENGANGKUTAN ===== */
 
+const diagnosticPanel = document.createElement("details");
+
+const diagnosticTitle = document.createElement("summary");
+diagnosticTitle.textContent = "Semakan data pengangkutan";
+
+diagnosticPanel.appendChild(diagnosticTitle);
+
+for (const data of datasets) {
+
+  const validCount = data.stops.filter(
+    stop => hasValidCoordinates(stop)
+  ).length;
+
+  const row = document.createElement("p");
+
+  row.textContent =
+    data.name + ": " +
+    validCount + "/" +
+    data.stops.length +
+    " hentian mempunyai koordinat GPS";
+
+  diagnosticPanel.appendChild(row);
+}
+
+output.appendChild(diagnosticPanel);
         const heading = document.createElement("p");
         heading.textContent = "Stesen paling hampir dengan anda:";
         output.appendChild(heading);
