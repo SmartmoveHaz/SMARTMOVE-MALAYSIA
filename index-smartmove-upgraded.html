@@ -1343,6 +1343,19 @@ body {
   <div id="nearbyMap" class="nearby-map"></div>
 
 </section>
+
+<!-- ===== SMARTMOVE SAVED HUB ===== -->
+<section id="savedPage" class="card" hidden>
+  <h2>🔖 Disimpan</h2>
+  <p>Sejarah carian dan laluan kegemaran anda.</p>
+
+  <div id="savedHistoryList">
+    <p>Belum ada sejarah carian.</p>
+  </div>
+
+  <div id="savedFavoritesList"></div>
+</section>
+
 <script>
 
 window.addEventListener("error", (event) => {
@@ -1458,6 +1471,109 @@ function safeStorageSet(key, value) {
   } catch (error) {
     console.warn("Gagal menyimpan tetapan:", error);
   }
+}
+/* ===== SMARTMOVE SEARCH HISTORY ===== */
+
+let searchHistory = [];
+let savedFavorites = [];
+
+try {
+  const storedFavorites = JSON.parse(
+    safeStorageGet("smartmove-favorites", "[]")
+  );
+
+  if (Array.isArray(storedFavorites)) {
+    savedFavorites = storedFavorites;
+  }
+} catch (error) {
+  savedFavorites = [];
+}
+
+function saveFavorites() {
+  safeStorageSet(
+    "smartmove-favorites",
+    JSON.stringify(savedFavorites)
+  );
+}
+try {
+  const storedHistory = JSON.parse(
+    safeStorageGet("smartmove-search-history", "[]")
+  );
+
+  if (Array.isArray(storedHistory)) {
+    searchHistory = storedHistory;
+  }
+} catch (error) {
+  searchHistory = [];
+}
+
+function saveSearchHistory() {
+  safeStorageSet(
+    "smartmove-search-history",
+    JSON.stringify(searchHistory)
+  );
+}
+function renderSavedHub() {
+  const output = $("savedHistoryList");
+
+  if (!output) return;
+
+  output.innerHTML = "";
+
+  if (!searchHistory.length) {
+    output.textContent = "Belum ada sejarah carian.";
+    return;
+  }
+
+  const heading = document.createElement("h3");
+  heading.textContent = "🕘 Sejarah Carian";
+  output.appendChild(heading);
+
+  searchHistory.forEach((item, index) => {
+    const card = document.createElement("div");
+    card.className = "result";
+
+    const details = document.createElement("p");
+    details.textContent =
+      item.from + " → " + item.to +
+      " | " + item.date +
+      (item.time ? " | " + item.time : "");
+
+    const replay = document.createElement("button");
+    replay.textContent = "🔄 Cari laluan ini";
+
+    replay.addEventListener("click", () => {
+      $("from").value = item.from;
+      $("to").value = item.to;
+      $("date").value = item.date;
+      $("time").value = item.time || "";
+
+      $("savedPage").hidden = true;
+      document.querySelector("main").hidden = false;
+      $("mapPage").hidden = true;
+
+      $("search").click();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    const remove = document.createElement("button");
+    remove.textContent = "🗑️ Padam";
+
+    remove.addEventListener("click", () => {
+      searchHistory.splice(index, 1);
+      saveSearchHistory();
+      renderSavedHub();
+    });
+
+    const favorite = document.createElement("button");
+
+const isFavorite = savedFavorites.some(item =>
+  item.from === itemFrom &&
+  item.to === itemTo &&
+  item.date === itemDate &&
+  item.time === itemTime
+);
+  });
 }
 const norm = value =>
   String(value || "")
@@ -3714,6 +3830,18 @@ lastSearchResults = all;
 
 renderSearchResults();
 
+/* SIMPAN SEJARAH CARIAN */
+searchHistory.unshift({
+  from: from,
+  to: to,
+  date: date,
+  time: time,
+  savedAt: Date.now()
+});
+
+searchHistory = searchHistory.slice(0, 20);
+saveSearchHistory();
+
   }catch(error){
 
     console.error(error);
@@ -3803,12 +3931,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       else if (button.id === "navSaved") {
-        status.textContent =
-          "Fungsi laluan disimpan akan dibangunkan dalam langkah seterusnya.";
-        document.getElementById("results").scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+        document.querySelector("main").hidden = true;
+        $("mapPage").hidden = true;
+        $("savedPage").hidden = false;
+        renderSavedHub();
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
       }
 
       else if (button.id === "navProfile") {
