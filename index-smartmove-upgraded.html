@@ -1513,57 +1513,7 @@ function saveSearchHistory() {
     JSON.stringify(searchHistory)
   );
 }
-function renderSavedHub() {
-  const output = $("savedHistoryList");
 
-  if (!output) return;
-
-  output.innerHTML = "";
-
-  if (!searchHistory.length) {
-    output.textContent = "Belum ada sejarah carian.";
-    return;
-  }
-
-  const heading = document.createElement("h3");
-  heading.textContent = "🕘 Sejarah Carian";
-  output.appendChild(heading);
-
-  searchHistory.forEach((item, index) => {
-    const card = document.createElement("div");
-    card.className = "result";
-
-    const details = document.createElement("p");
-    details.textContent =
-      item.from + " → " + item.to +
-      " | " + item.date +
-      (item.time ? " | " + item.time : "");
-
-    const replay = document.createElement("button");
-    replay.textContent = "🔄 Cari laluan ini";
-
-    replay.addEventListener("click", () => {
-      $("from").value = item.from;
-      $("to").value = item.to;
-      $("date").value = item.date;
-      $("time").value = item.time || "";
-
-      $("savedPage").hidden = true;
-      document.querySelector("main").hidden = false;
-      $("mapPage").hidden = true;
-
-      $("search").click();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-
-    const remove = document.createElement("button");
-    remove.textContent = "🗑️ Padam";
-
-    remove.addEventListener("click", () => {
-      searchHistory.splice(index, 1);
-      saveSearchHistory();
-      renderSavedHub();
-    });
 
     function renderSavedHub() {
   const output = $("savedHistoryList");
