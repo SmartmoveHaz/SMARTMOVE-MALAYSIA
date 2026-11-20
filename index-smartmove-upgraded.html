@@ -1501,7 +1501,16 @@ get("frequencies.txt")
   const tripById = new Map(
     trips.map(trip => [trip.trip_id,trip])
   );
+const calendarByService = new Map(
+  calendar.map(row => [row.service_id, row])
+);
 
+const exceptionsByServiceDate = new Map(
+  exceptions.map(row => [
+    row.service_id + "|" + row.date,
+    row
+  ])
+);
   const routeById = new Map(
     routes.map(route => [route.route_id,route])
   );
