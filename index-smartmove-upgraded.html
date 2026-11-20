@@ -3895,56 +3895,35 @@ $("swapLocations").addEventListener("click", () => {
 function renderNearbyStationsList(nearby) {
   const output = $("nearbyStations");
   const busLayer = $("layerBus");
-const railLayer = $("layerRail");
-const radiusLayer = $("layerRadius");
-const radiusSelect = $("radiusDistance");
+  const railLayer = $("layerRail");
+  const radiusLayer = $("layerRadius");
+  const radiusSelect = $("radiusDistance");
 
-const showRadius = radiusLayer
-  ? radiusLayer.checked
-  : false;
+  const showBus = busLayer ? busLayer.checked : true;
+  const showRail = railLayer ? railLayer.checked : true;
+  const showRadius = radiusLayer ? radiusLayer.checked : false;
+  const radiusKm = radiusSelect
+    ? Number(radiusSelect.value) / 1000
+    : 1;
 
-const radiusMeters = radiusSelect
-  ? Number(radiusSelect.value)
-  : 1000;
+  const filtered = nearby.filter(stop => {
+    const matchesTransport =
+      (stop.transportType === "Bas" && showBus) ||
+      (
+        ["KTM", "LRT / MRT"].includes(stop.transportType) &&
+        showRail
+      ) ||
+      (
+        stop.transportType === "Pengangkutan" &&
+        showBus &&
+        showRail
+      );
 
-const radiusKm = radiusMeters / 1000;
+    const matchesRadius =
+      !showRadius || stop.distance <= radiusKm;
 
-const radiusNearby = nearby.filter(stop =>
-  stop.distance <= radiusKm
-);
-const radiusLayer = $("layerRadius");
-const radiusSelect = $("radiusDistance");
-
-const showRadius = radiusLayer
-  ? radiusLayer.checked
-  : false;
-
-const radiusMeters = radiusSelect
-  ? Number(radiusSelect.value)
-  : 1000;
-
-const radiusKm = radiusMeters / 1000;
-
-const radiusNearby = nearby.filter(stop =>
-  stop.distance <= radiusKm
-);
-const showBus = busLayer ? busLayer.checked : true;
-const showRail = railLayer ? railLayer.checked : true;
-
-const filtered = nearby.filter(stop => {
-  return (
-    (stop.transportType === "Bas" && showBus) ||
-    (
-      ["KTM", "LRT / MRT"].includes(stop.transportType) &&
-      showRail
-    ) ||
-    (
-      stop.transportType === "Pengangkutan" &&
-      showBus &&
-      showRail
-    )
-  );
-});
+    return matchesTransport && matchesRadius;
+  });
 
   output.innerHTML = "";
 
@@ -3985,7 +3964,7 @@ const filtered = nearby.filter(stop => {
 
   if (!filtered.length) {
     output.textContent =
-      "Tiada hentian bagi kategori ini berdekatan.";
+      "Tiada hentian bagi kategori atau radius ini.";
   }
 }
 
