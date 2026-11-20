@@ -2867,6 +2867,7 @@ if(!window.L) return;
   map.fitBounds(coordinates,{padding:[25,25]});
 }
 
+
 function renderSearchResults() {
   const results = $("results");
 
@@ -2876,69 +2877,66 @@ function renderSearchResults() {
       ).join("")
     : routeText("noRoutes");
 
-  // Pasang event listener sekali sahaja
-  if (!results.dataset.toggleHandlerAttached) {
+  results.onclick = function(event) {
 
-    results.addEventListener("click", function(event) {
+    const target = event.target instanceof Element
+      ? event.target
+      : event.target.parentElement;
 
-      const button = event.target.closest(".journey-toggle");
-      if (!button) return;
+    const button = target.closest(".journey-toggle");
 
-      const index = Number(button.dataset.index);
-      const details = document.getElementById(
-        "journey-details-" + index
+    if (!button) return;
+
+    const index = Number(button.dataset.index);
+    const details = document.getElementById(
+      "journey-details-" + index
+    );
+
+    const item = lastSearchResults[index];
+
+    if (!details || !item) return;
+
+    const opening = details.hidden;
+
+    details.hidden = !opening;
+
+    button.setAttribute(
+      "aria-expanded",
+      String(opening)
+    );
+
+    button.textContent = opening
+      ? "Tutup butiran perjalanan"
+      : "🕒 Lihat butiran perjalanan";
+
+    if (!opening) return;
+
+    if (item.type === "direct") {
+
+      renderRouteMap(item,index);
+
+    } else if (item.type === "transfer") {
+
+      renderTransferMap(
+        item.data,
+        item.t1,
+        item.boarding,
+        item.mid,
+        "transfer-map-1-" + index
       );
 
-      const item = lastSearchResults[index];
-
-      if (!details || !item) return;
-
-      const opening = details.hidden;
-
-      details.hidden = !opening;
-
-      button.setAttribute(
-        "aria-expanded",
-        String(opening)
+      renderTransferMap(
+        item.data2,
+        item.t2,
+        item.transfer,
+        item.finalStop,
+        "transfer-map-2-" + index
       );
 
-      button.textContent = opening
-        ? "Tutup butiran perjalanan"
-        : "🕒 Lihat butiran perjalanan";
-
-      // Muatkan peta hanya apabila butiran dibuka
-      if (opening) {
-
-        if (item.type === "direct") {
-
-          renderRouteMap(item,index);
-
-        } else if (item.type === "transfer") {
-
-          renderTransferMap(
-            item.data,
-            item.t1,
-            item.boarding,
-            item.mid,
-            "transfer-map-1-" + index
-          );
-
-          renderTransferMap(
-            item.data2,
-            item.t2,
-            item.transfer,
-            item.finalStop,
-            "transfer-map-2-" + index
-          );
-
-        }
-      }
-
-    });
-
-    results.dataset.toggleHandlerAttached = "true";
-  }
+    }
+  };
 }
+
 
 
 function getJourneyDuration(item){
