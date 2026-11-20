@@ -4014,7 +4014,7 @@ const showBus = busLayer ? busLayer.checked : true;
 const showRail = railLayer ? railLayer.checked : true;
 
 const filteredNearby = nearby.filter(stop => {
-  return (
+  const matchesTransport =
     (stop.transportType === "Bas" && showBus) ||
     (
       ["KTM", "LRT / MRT"].includes(stop.transportType) &&
@@ -4024,8 +4024,12 @@ const filteredNearby = nearby.filter(stop => {
       stop.transportType === "Pengangkutan" &&
       showBus &&
       showRail
-    )
-  );
+    );
+
+  const matchesRadius =
+    !showRadius || stop.distance <= radiusKm;
+
+  return matchesTransport && matchesRadius;
 });
 [busLayer, railLayer].forEach(layer => {
   if (layer) {
