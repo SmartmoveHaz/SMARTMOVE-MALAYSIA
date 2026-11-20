@@ -1334,6 +1334,114 @@ body {
   }
 }
 
+/* ===== SMARTMOVE PREMIUM DATA DASHBOARD ===== */
+
+.premium-diagnostics-card,
+.premium-nearby-summary {
+  padding: 17px;
+  border: 1px solid #dce8e9;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #ffffff, #f0f7f6);
+  box-shadow: 0 8px 24px rgba(16, 47, 64, 0.07);
+}
+
+.premium-diagnostics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.premium-diagnostics-eyebrow {
+  color: #07847d;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+}
+
+.premium-diagnostics-header h3 {
+  margin: 5px 0 0;
+  color: #102f40;
+  font-size: 17px;
+  font-weight: 850;
+}
+
+.premium-diagnostics-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: #e0f2ef;
+  color: #07847d;
+  font-size: 23px;
+}
+
+.premium-diagnostics-rows {
+  display: grid;
+  gap: 8px;
+}
+
+.premium-diagnostic-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e5edef;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #526975;
+  font-size: 12px;
+}
+
+.premium-diagnostic-row strong {
+  color: #087f78;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.premium-diagnostics-note {
+  margin: 13px 0 0;
+  color: #82919a;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.premium-nearby-summary {
+  margin-top: 12px;
+}
+
+.premium-nearby-summary strong {
+  color: #102f40;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.premium-nearby-summary p {
+  margin: 9px 0 0;
+  color: #07847d;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.8;
+}
+
+@media (max-width: 480px) {
+  .premium-diagnostics-card,
+  .premium-nearby-summary {
+    padding: 14px;
+    border-radius: 17px;
+  }
+
+  .premium-diagnostic-row {
+    padding: 10px;
+    font-size: 11px;
+  }
+}
+
 </style>
 </head>
 
