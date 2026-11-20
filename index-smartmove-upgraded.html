@@ -3339,6 +3339,14 @@ const perkhidmatanPanel = $("perkhidmatanPanel");
 
 $("closePerkhidmatan").addEventListener("click", () => {
   perkhidmatanPanel.hidden = true;
+
+  const mainPage = document.querySelector("main");
+  mainPage.hidden = false;
+
+  mainPage.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 });
 
 perkhidmatanButton.addEventListener("click", () => {
