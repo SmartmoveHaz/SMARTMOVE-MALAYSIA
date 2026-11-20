@@ -1032,6 +1032,120 @@ label[for="time"] {
 body {
   padding-bottom: 90px;
 }
+
+/* ===== SMARTMOVE PREMIUM TRANSIT MAP ===== */
+
+#mapPage {
+  background: #f7fbfc;
+  border: 1px solid #dcebea;
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: 0 12px 35px #082b3a12;
+}
+
+#mapPage h2 {
+  color: #082b3a;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  margin-bottom: 18px;
+}
+
+#nearbyTransportFilter {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid #d5e7e5;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #18343b;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 3px 12px #082b3a08;
+}
+
+/* Smart Layers premium panel */
+.smart-layers-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+  padding: 15px;
+  border: 1px solid #dcebea;
+  border-radius: 19px;
+  background: linear-gradient(145deg, #ffffff, #f0f8f7);
+  box-shadow: 0 5px 18px #082b3a0b;
+}
+
+.smart-layers-panel h3,
+.smart-layers-panel p {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.smart-layers-panel h3 {
+  color: #082b3a;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.smart-layers-panel p {
+  color: #647c80;
+  font-size: 12px;
+  margin-top: -5px;
+}
+
+.smart-layers-panel label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 58px;
+  margin: 0;
+  padding: 11px;
+  border: 1px solid #dcebea;
+  border-radius: 13px;
+  background: #ffffff;
+  color: #18343b;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px #082b3a08;
+}
+
+.smart-layers-panel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  accent-color: #087f78;
+}
+
+#nearbyMap {
+  border: 1px solid #d5e7e5;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px #082b3a14;
+  overflow: hidden;
+}
+
+#nearbyStations {
+  margin-top: 14px;
+}
+
+@media (max-width: 380px) {
+  #mapPage {
+    padding: 13px;
+  }
+
+  .smart-layers-panel {
+    gap: 8px;
+    padding: 11px;
+  }
+
+  .smart-layers-panel label {
+    padding: 8px;
+    font-size: 11px;
+  }
+}
+
 </style>
 </head>
 
