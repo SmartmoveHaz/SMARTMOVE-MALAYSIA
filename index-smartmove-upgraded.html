@@ -1648,15 +1648,7 @@ const exceptionsByServiceDate = new Map(
   ])
 );
 
-const frequenciesByTrip = new Map();
 
-for (const frequency of frequencies) {
-  if (!frequenciesByTrip.has(frequency.trip_id)) {
-    frequenciesByTrip.set(frequency.trip_id, []);
-  }
-
-  frequenciesByTrip.get(frequency.trip_id).push(frequency);
-}
   const routeById = new Map(
     routes.map(route => [route.route_id,route])
   );
@@ -2166,7 +2158,7 @@ for (const frequency of (data.frequencies || [])) {
 
     if(baseStart===null || baseA===null || baseB===null) continue;
 
-    const frequencies = frequenciesByTrip.get(tripId) || [];
+    const frequencies = data.frequenciesByTrip.get(tripId) || [];
 
     const departures = [];
 
