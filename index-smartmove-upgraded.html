@@ -3402,6 +3402,21 @@ nearby.push({
         }
 
         nearby.sort((a, b) => a.distance - b.distance);
+
+const nearbyRadiusKm = 10;
+const allNearbyStops = [...nearby];
+
+const nearbyInRange = nearby.filter(
+  stop => stop.distance <= nearbyRadiusKm
+);
+
+nearby.length = 0;
+
+nearby.push(
+  ...(nearbyInRange.length > 0
+    ? nearbyInRange
+    : allNearbyStops.slice(0, 10))
+);
         
 const nearbyTypeCounts = nearby.reduce((counts, stop) => {
   counts[stop.transportType] =
