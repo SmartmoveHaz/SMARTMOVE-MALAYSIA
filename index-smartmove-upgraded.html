@@ -3878,14 +3878,34 @@ function renderNearbyStationsList(nearby) {
   if (!output) return;
 
   const selectedType = filterElement
-    ? filterElement.value
-    : "Semua";
+  ? filterElement.value
+  : "Semua";
 
-  const filtered = selectedType === "Semua"
-    ? nearby
-    : nearby.filter(
-        stop => stop.transportType === selectedType
-      );
+const busLayer = $("layerBus");
+const railLayer = $("layerRail");
+
+const showBus = busLayer ? busLayer.checked : true;
+const showRail = railLayer ? railLayer.checked : true;
+
+const filtered = nearby.filter(stop => {
+  const matchesTransport =
+    selectedType === "Semua" ||
+    stop.transportType === selectedType;
+
+  const matchesLayer =
+    (stop.transportType === "Bas" && showBus) ||
+    (
+      ["KTM", "LRT / MRT"].includes(stop.transportType) &&
+      showRail
+    ) ||
+    (
+      stop.transportType === "Pengangkutan" &&
+      showBus &&
+      showRail
+    );
+
+  return matchesTransport && matchesLayer;
+});
 
   output.innerHTML = "";
 
@@ -3943,11 +3963,31 @@ function renderNearbyMap(userLat, userLon, nearby) {
     ? filterElement.value
     : "Semua";
 
-  const filteredNearby = selectedType === "Semua"
-    ? nearby
-    : nearby.filter(
-        stop => stop.transportType === selectedType
-      );
+  const busLayer = $("layerBus");
+const railLayer = $("layerRail");
+
+const showBus = busLayer ? busLayer.checked : true;
+const showRail = railLayer ? railLayer.checked : true;
+
+const filteredNearby = nearby.filter(stop => {
+  const matchesTransport =
+    selectedType === "Semua" ||
+    stop.transportType === selectedType;
+
+  const matchesLayer =
+    (stop.transportType === "Bas" && showBus) ||
+    (
+      ["KTM", "LRT / MRT"].includes(stop.transportType) &&
+      showRail
+    ) ||
+    (
+      stop.transportType === "Pengangkutan" &&
+      showBus &&
+      showRail
+    );
+
+  return matchesTransport && matchesLayer;
+});
 
   if (filterElement) {
     filterElement.onchange = () => {
@@ -3955,7 +3995,14 @@ function renderNearbyMap(userLat, userLon, nearby) {
       renderNearbyStationsList(nearby);
     };
   }
-
+[busLayer, railLayer].forEach(layer => {
+  if (layer) {
+    layer.onchange = () => {
+      renderNearbyMap(userLat, userLon, nearby);
+      renderNearbyStationsList(nearby);
+    };
+  }
+});
   mapElement.style.display = "block";
 
   if (window.smartmoveNearbyMap) {
