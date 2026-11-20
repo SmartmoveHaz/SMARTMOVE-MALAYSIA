@@ -3483,7 +3483,8 @@ renderNearbyMap(userLat, userLon, nearby);
 
 const stationName = document.createElement("span");
 stationName.className = "nearby-station-name";
-stationName.textContent = stop.name;
+stationName.textContent =
+  stop.name + " · " + stop.distance.toFixed(2) + " km";
 
 const transportBadge = document.createElement("span");
 transportBadge.className = "nearby-station-type";
