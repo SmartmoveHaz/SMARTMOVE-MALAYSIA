@@ -1565,15 +1565,122 @@ function renderSavedHub() {
       renderSavedHub();
     });
 
-    const favorite = document.createElement("button");
+    function renderSavedHub() {
+  const output = $("savedHistoryList");
+  const favoritesOutput = $("savedFavoritesList");
 
-const isFavorite = savedFavorites.some(item =>
-  item.from === itemFrom &&
-  item.to === itemTo &&
-  item.date === itemDate &&
-  item.time === itemTime
-);
+  if (!output) return;
+
+  output.innerHTML = "";
+  if (favoritesOutput) favoritesOutput.innerHTML = "";
+
+  const heading = document.createElement("h3");
+  heading.textContent = "🕘 Sejarah Carian";
+  output.appendChild(heading);
+
+  if (!searchHistory.length) {
+    output.appendChild(
+      Object.assign(document.createElement("p"), {
+        textContent: "Belum ada sejarah carian."
+      })
+    );
+  }
+
+  searchHistory.forEach((item, index) => {
+    const card = document.createElement("div");
+    card.className = "result";
+
+    const details = document.createElement("p");
+    details.textContent =
+      item.from + " → " + item.to +
+      " | " + item.date +
+      (item.time ? " | " + item.time : "");
+
+    const replay = document.createElement("button");
+    replay.textContent = "🔄 Cari laluan ini";
+
+    replay.addEventListener("click", () => {
+      $("from").value = item.from;
+      $("to").value = item.to;
+      $("date").value = item.date;
+      $("time").value = item.time || "";
+
+      $("savedPage").hidden = true;
+      $("mapPage").hidden = true;
+      document.querySelector("main").hidden = false;
+
+      $("search").click();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    const itemFrom = item.from;
+    const itemTo = item.to;
+    const itemDate = item.date;
+    const itemTime = item.time || "";
+
+    const isFavorite = savedFavorites.some(f =>
+      f.from === itemFrom &&
+      f.to === itemTo &&
+      f.date === itemDate &&
+      (f.time || "") === itemTime
+    );
+
+    const favorite = document.createElement("button");
+    favorite.textContent = isFavorite
+      ? "⭐ Sudah Kegemaran"
+      : "☆ Jadikan Kegemaran";
+
+    favorite.addEventListener("click", () => {
+      if (isFavorite) {
+        savedFavorites = savedFavorites.filter(f =>
+          !(f.from === itemFrom &&
+            f.to === itemTo &&
+            f.date === itemDate &&
+            (f.time || "") === itemTime)
+        );
+      } else {
+        savedFavorites.push({
+          from: itemFrom,
+          to: itemTo,
+          date: itemDate,
+          time: itemTime
+        });
+      }
+
+      saveFavorites();
+      renderSavedHub();
+    });
+
+    const remove = document.createElement("button");
+    remove.textContent = "🗑️ Padam";
+
+    remove.addEventListener("click", () => {
+      searchHistory.splice(index, 1);
+      saveSearchHistory();
+      renderSavedHub();
+    });
+
+    card.append(details, replay, favorite, remove);
+    output.appendChild(card);
   });
+
+  if (favoritesOutput) {
+    const favHeading = document.createElement("h3");
+    favHeading.textContent = "⭐ Laluan Kegemaran";
+    favoritesOutput.appendChild(favHeading);
+
+    if (!savedFavorites.length) {
+      favoritesOutput.textContent = "Belum ada laluan kegemaran.";
+    } else {
+      savedFavorites.forEach(item => {
+        const p = document.createElement("p");
+        p.textContent =
+          item.from + " → " + item.to +
+          " | " + item.date;
+        favoritesOutput.appendChild(p);
+      });
+    }
+  }
 }
 const norm = value =>
   String(value || "")
