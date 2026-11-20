@@ -3999,14 +3999,12 @@ const filteredNearby = nearby.filter(stop => {
 
   bounds.push([userLat, userLon]);
 
-  const mapStops = selectedType === "Semua"
-    ? ["Bas", "KTM", "LRT / MRT", "Pengangkutan"]
-        .flatMap(type =>
-          filteredNearby
-            .filter(stop => stop.transportType === type)
-            .slice(0, 30)
-        )
-    : filteredNearby.slice(0, 30);
+  const mapStops = ["Bas", "KTM", "LRT / MRT", "Pengangkutan"]
+  .flatMap(type =>
+    filteredNearby
+      .filter(stop => stop.transportType === type)
+      .slice(0, 30)
+  );
 
   mapStops.forEach(stop => {
     const marker = L.circleMarker(
