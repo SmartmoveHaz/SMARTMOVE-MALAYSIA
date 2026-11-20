@@ -584,6 +584,19 @@ header {
   margin-top: 6px;
   font-size: 13px;
 }
+/* ===== PETA GPS BERDEKATAN ===== */
+
+#nearbyMap {
+  display: none;
+  width: 100%;
+  height: 360px;
+  margin-top: 12px;
+  border: 1px solid #D5EAE6;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px #075F5915;
+  z-index: 1;
+}
 
 #nearbyStations button {
   border: 1px solid #d1e5e2;
@@ -1254,6 +1267,7 @@ body {
 </button>
 
   <div id="nearbyStations"></div>
+  <div id="nearbyMap" class="nearby-map"></div>
 </div>
 <div class="swap-location-row">
   <button type="button" id="swapLocations" aria-label="Terbalikkan lokasi" title="Terbalikkan lokasi">
@@ -3199,7 +3213,95 @@ $("swapLocations").addEventListener("click", () => {
   $("from-suggestions").innerHTML = "";
   $("to-suggestions").innerHTML = "";
 });
+/* ===== PAPAR PETA STESEN BERDEKATAN ===== */
 
+function renderNearbyMap(userLat, userLon, nearby) {
+
+  const mapElement = $("nearbyMap");
+
+  if (!mapElement || !window.L) {
+    return;
+  }
+
+  mapElement.style.display = "block";
+
+  if (window.smartmoveNearbyMap) {
+    window.smartmoveNearbyMap.remove();
+  }
+
+  const map = L.map(mapElement).setView(
+    [userLat, userLon],
+    14
+  );
+
+  window.smartmoveNearbyMap = map;
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution: "&copy; OpenStreetMap"
+    }
+  ).addTo(map);
+
+  const bounds = [];
+
+  L.circleMarker([userLat, userLon], {
+    radius: 10,
+    color: "#ffffff",
+    weight: 3,
+    fillColor: "#1677FF",
+    fillOpacity: 1
+  })
+  .bindPopup("📍 Lokasi anda sekarang")
+  .addTo(map);
+
+  bounds.push([userLat, userLon]);
+
+  nearby.slice(0, 30).forEach(stop => {
+
+    const marker = L.circleMarker(
+      [stop.lat, stop.lon],
+      {
+        radius: 7,
+        color: "#ffffff",
+        weight: 2,
+        fillColor:
+          stop.transportType === "Bas"
+            ? "#16A34A"
+            : stop.transportType === "KTM"
+              ? "#9333EA"
+              : "#E58A16",
+        fillOpacity: 1
+      }
+    );
+
+    const popup = document.createElement("div");
+    const name = document.createElement("strong");
+    name.textContent = stop.name;
+
+    const details = document.createElement("p");
+    details.textContent =
+      stop.transportType + " · " +
+      (stop.distance < 1
+        ? Math.round(stop.distance * 1000) + " m"
+        : stop.distance.toFixed(2) + " km");
+
+    popup.append(name, details);
+    marker.bindPopup(popup);
+    marker.addTo(map);
+
+    bounds.push([stop.lat, stop.lon]);
+  });
+
+  if (bounds.length > 1) {
+    map.fitBounds(bounds, {
+      padding: [25, 25],
+      maxZoom: 15
+    });
+  }
+
+  setTimeout(() => map.invalidateSize(), 200);
+}
 /* ===== CARI STESEN BERDEKATAN ===== */
 
 $("findNearbyStations").addEventListener("click", () => {
@@ -3280,6 +3382,8 @@ if (data.name === "KTMB") {
 nearby.push({
   name: stop.stop_name,
   transportType: transportType,
+  lat: lat,
+  lon: lon,
   distance: calculateDistance(
     userLat, userLon, lat, lon
   )
@@ -3288,7 +3392,7 @@ nearby.push({
         }
 
         nearby.sort((a, b) => a.distance - b.distance);
-
+renderNearbyMap(userLat, userLon, nearby);
         output.innerHTML = "";
 
         const heading = document.createElement("p");
@@ -3550,26 +3654,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       else if (button.id === "navMap") {
-        const maps = [...document.querySelectorAll(".route-map")];
 
-        const visibleMap = maps.find(map =>
-          map.getClientRects().length > 0
-        );
+  $("findNearbyStations").click();
 
-        if (visibleMap) {
-          visibleMap.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-        } else {
-          status.textContent =
-            "Buat carian dan buka butiran perjalanan untuk melihat peta.";
-          document.getElementById("results").scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-        }
-      }
+  setTimeout(() => {
+    $("nearbyMap").scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }, 500);
+
+}
 
       else if (button.id === "navSchedule") {
         document.getElementById("date").scrollIntoView({
