@@ -1329,7 +1329,7 @@ body {
 <section id="mapPage" class="card" hidden>
 
   <h2>🗺️ Peta Pengangkutan Berdekatan</h2>
-
+<div id="mapDiagnostics"></div>
   
 
   <div id="nearbyMap" class="nearby-map"></div>
@@ -3430,7 +3430,8 @@ for (const data of datasets) {
   diagnosticPanel.appendChild(row);
 }
 
-output.appendChild(diagnosticPanel);
+$("mapDiagnostics").innerHTML = "";
+$("mapDiagnostics").appendChild(diagnosticPanel);
         const heading = document.createElement("p");
         heading.textContent = "Stesen paling hampir dengan anda:";
         output.appendChild(heading);
