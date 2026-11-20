@@ -4007,19 +4007,23 @@ $("findNearbyStations").addEventListener("click", () => {
             if (seen.has(key)) continue;
             seen.add(key);
 
-            let transportType = "Pengangkutan";
+            
+const feedName = (data.name || "").toLowerCase();
 
-if (data.name === "KTMB") {
+let transportType = "Pengangkutan";
+
+if (feedName.includes("ktm")) {
   transportType = "KTM";
-} else if (data.name === "Rapid Rail KL") {
+} else if (feedName.includes("rail")) {
   transportType = "LRT / MRT";
 } else if (
-  data.name.includes("Bus") ||
-  data.name.includes("Feeder") ||
-  data.name.startsWith("BAS.MY")
+  feedName.includes("bus") ||
+  feedName.includes("feeder") ||
+  feedName.includes("bas")
 ) {
   transportType = "Bas";
 }
+
 
 nearby.push({
   name: stop.stop_name,
