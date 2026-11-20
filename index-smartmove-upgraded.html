@@ -3793,6 +3793,9 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 
       else if (button.id === "navSchedule") {
+        $("mapPage").hidden = true;
+        document.querySelector("main").hidden = false;
+
         document.getElementById("date").scrollIntoView({
           behavior: "smooth",
           block: "center"
