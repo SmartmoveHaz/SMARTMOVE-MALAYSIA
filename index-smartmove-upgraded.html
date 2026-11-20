@@ -3296,8 +3296,28 @@ function renderNearbyMap(userLat, userLon, nearby) {
         ? Math.round(stop.distance * 1000) + " m"
         : stop.distance.toFixed(2) + " km");
 
-    popup.append(name, details);
-    marker.bindPopup(popup);
+    const directionLink = document.createElement("a");
+
+directionLink.textContent = "🧭 Arah ke hentian";
+
+directionLink.href =
+  "https://www.google.com/maps/dir/?api=1&destination=" +
+  stop.lat + "," + stop.lon;
+
+directionLink.target = "_blank";
+directionLink.rel = "noopener noreferrer";
+
+directionLink.style.display = "inline-block";
+directionLink.style.marginTop = "8px";
+directionLink.style.padding = "8px 12px";
+directionLink.style.background = "#1677FF";
+directionLink.style.color = "#ffffff";
+directionLink.style.borderRadius = "8px";
+directionLink.style.textDecoration = "none";
+
+popup.append(name, details, directionLink);
+
+marker.bindPopup(popup);
     marker.addTo(map);
 
     bounds.push([stop.lat, stop.lon]);
