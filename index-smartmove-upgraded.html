@@ -843,6 +843,142 @@ label[for="time"] {
   font-size: 16px;
   color: #075F59;
 }
+
+/* SMARTMOVE - Compact Journey Card */
+
+.journey-summary {
+  background: #ffffff;
+  border: 1px solid #dcebe9;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 10px 0;
+}
+
+.journey-time-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.journey-time-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.journey-time-item span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.journey-time-item strong {
+  color: #075f59;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.journey-time-line {
+  color: #087f78;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.journey-summary-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.journey-summary-meta span {
+  background: #edf7f6;
+  padding: 5px 9px;
+  border-radius: 20px;
+}
+
+.journey-toggle {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 15px;
+  margin-top: 5px;
+  background: #087f78;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.journey-toggle:active {
+  transform: scale(0.98);
+}
+
+.journey-details {
+  padding-top: 14px;
+}
+
+.journey-details[hidden] {
+  display: none !important;
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 9px 0;
+  color: #475569;
+  font-size: 12px;
+}
+
+.transfer-step,
+.transfer-leg-card {
+  margin: 12px 0;
+  padding: 13px;
+  border: 1px solid #dcebe9;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.transfer-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.transfer-step-content span {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.transfer-step-content strong {
+  color: #075f59;
+}
+
+.transfer-wait {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 9px;
+  background: #fff7e6;
+  color: #946200;
+  font-size: 13px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .journey-time-item strong {
+    font-size: 20px;
+  }
+
+  .journey-summary {
+    padding: 12px;
+  }
+}
+
 </style>
 </head>
 
@@ -2277,61 +2413,183 @@ const waitingTime = nextDeparture - arrival;
 /* PAPAR KEPUTUSAN LALUAN */
 
 
+
 function showResult(item,index){
+
+  const departure = item.type === "direct"
+    ? item.a.departure_time || item.a.arrival_time || "-"
+    : item.boarding.departure_time || item.boarding.arrival_time || "-";
+
+  const arrival = item.type === "direct"
+    ? item.b.arrival_time || item.b.departure_time || "-"
+    : item.finalStop.arrival_time || item.finalStop.departure_time || "-";
+
+  const duration = getJourneyDuration(item);
+
+  const summary = `
+    <div class="journey-summary">
+      <div class="journey-time-row">
+        <div class="journey-time-item">
+          <span>${routeText("departure")}</span>
+          <strong>${esc(departure)}</strong>
+        </div>
+        <div class="journey-time-line">→</div>
+        <div class="journey-time-item">
+          <span>${routeText("arrival")}</span>
+          <strong>${esc(arrival)}</strong>
+        </div>
+      </div>
+      <div class="journey-summary-meta">
+        <span>${duration} minit</span>
+        <span>${item.type === "direct" ? "Laluan terus" : "1 pertukaran"}</span>
+      </div>
+    </div>
+  `;
+
+  let details = "";
 
   if(item.type === "direct"){
 
-    const stations = item.stationList.length
+    const stations = (item.stationList || []).length
       ? '<ol class="stops">' +
-        item.stationList
-          .map(name => '<li>' + esc(name) + '</li>')
-          .join("") +
+        item.stationList.map(name =>
+          '<li>' + esc(name) + '</li>'
+        ).join("") +
         '</ol>'
       : "";
 
-    return `
-      <article class="result">
-        <div class="result-title">${routeText("direct")}</div>
+    details = `
+      <p>
+        <span class="pill">${esc(getOperatorLabel(item.data))}</span>
+        <span class="pill">${esc(getTransportLabel(item.data,item.trip))}</span>
+        <span class="pill">${esc(routeName(item.data,item.trip))}</span>
+      </p>
 
-<p>
-  <span class="pill">${esc(getOperatorLabel(item.data))}</span>
-  <span class="pill">${esc(getTransportLabel(item.data,item.trip))}</span>
-  <span class="pill">${esc(routeName(item.data,item.trip))}</span>
-</p>
+      <div class="route-map" id="route-map-${index}"></div>
 
-<div class="route-map" id="route-map-${index}"></div>
+      <div class="map-legend">
+        <span>🟢 Mula</span>
+        <span>🔵 Hentian</span>
+        <span>🔴 Destinasi</span>
+      </div>
 
-<div style="display:flex; gap:16px; flex-wrap:wrap; margin:10px 0; font-size:13px;">
-  <span><span style="color:#16a34a;">●</span> ${routeText("start")}</span>
-  <span><span style="color:#2563eb;">●</span> ${routeText("stop")}</span>
-  <span><span style="color:#dc2626;">●</span> ${routeText("destination")}</span>
-</div>
+      <details>
+        <summary>${routeText("viewStops")}</summary>
+        ${stations}
+      </details>
+    `;
 
-<p><b>${routeText("route")}:</b>
-  ${esc(routeName(item.data,item.trip))}
-</p>
+  }else{
 
-<div class="journey-time-row">
-  <div class="journey-time-item">
-    <span>${routeText("departure")}</span>
-    <strong>${esc(item.a.departure_time || item.a.arrival_time || "-")}</strong>
-  </div>
+    const transferArrival =
+      item.mid.arrival_time || item.mid.departure_time || "-";
 
-  <div class="journey-time-line">→</div>
+    const transferDeparture =
+      item.transfer.departure_time || item.transfer.arrival_time || "-";
 
-  <div class="journey-time-item">
-    <span>${routeText("arrival")}</span>
-    <strong>${esc(item.b.arrival_time || item.b.departure_time || "-")}</strong>
-  </div>
-</div>
+    let waitingMinutes =
+      timeToMinutes(transferDeparture) -
+      timeToMinutes(transferArrival);
 
-<details>
-  <summary>${routeText("viewStops")}</summary>
-  ${stations}
-</details>
-      </article>
+    if(waitingMinutes < 0) waitingMinutes += 1440;
+
+    details = `
+      <div class="transfer-step">
+        <div class="transfer-step-icon">🟢</div>
+        <div class="transfer-step-content">
+          <span>LOKASI MULA</span>
+          <strong>${esc(stopLabel(item.data,item.boarding.stop_id))}</strong>
+          ${googleMapsButton(item.data.stopById.get(item.boarding.stop_id))}
+        </div>
+      </div>
+
+      <div class="transfer-step">
+        <div class="transfer-step-icon">🔄</div>
+        <div class="transfer-step-content">
+          <span>STESEN PERTUKARAN</span>
+          <strong>${esc(stopLabel(item.data,item.mid.stop_id))}</strong>
+          ${googleMapsButton(item.data.stopById.get(item.mid.stop_id))}
+        </div>
+      </div>
+
+      <div class="transfer-step">
+        <div class="transfer-step-icon">🔴</div>
+        <div class="transfer-step-content">
+          <span>DESTINASI AKHIR</span>
+          <strong>${esc(stopLabel(item.data2,item.finalStop.stop_id))}</strong>
+          ${googleMapsButton(item.data2.stopById.get(item.finalStop.stop_id))}
+        </div>
+      </div>
+
+      <div class="transfer-leg-card">
+        <b>01 · ${routeText("firstJourney")}</b>
+        <p>${esc(getOperatorLabel(item.data))} · ${esc(getTransportLabel(item.data,item.t1))}</p>
+        <p>${esc(routeName(item.data,item.t1))}</p>
+        <strong>${esc(item.boarding.departure_time || item.boarding.arrival_time || "-")} → ${esc(transferArrival)}</strong>
+      </div>
+
+      <div class="transfer-wait">
+        ⏳ ${routeText("waiting")}: ${waitingMinutes} ${routeText("minutes")}
+      </div>
+
+      <div class="transfer-leg-card second">
+        <b>02 · ${routeText("secondJourney")}</b>
+        <p>${esc(getOperatorLabel(item.data2))} · ${esc(getTransportLabel(item.data2,item.t2))}</p>
+        <p>${esc(routeName(item.data2,item.t2))}</p>
+        <strong>${esc(transferDeparture)} → ${esc(arrival)}</strong>
+      </div>
+
+      <b>${routeText("firstMap")}</b>
+      <div class="route-map" id="transfer-map-1-${index}"></div>
+
+      <b>${routeText("secondMap")}</b>
+      <div class="route-map" id="transfer-map-2-${index}"></div>
+
+      <details>
+        <summary>${routeText("viewStops")}</summary>
+        <p><b>${routeText("firstJourney")}</b></p>
+        <ol class="stops">
+          ${(item.firstStops || []).map(name =>
+            '<li>' + esc(name) + '</li>'
+          ).join("")}
+        </ol>
+        <p><b>${routeText("secondJourney")}</b></p>
+        <ol class="stops">
+          ${(item.secondStops || []).map(name =>
+            '<li>' + esc(name) + '</li>'
+          ).join("")}
+        </ol>
+      </details>
     `;
   }
+
+  return `
+    <article class="result">
+      <div class="result-title">
+        ${item.type === "direct"
+          ? routeText("direct")
+          : routeText("transfer")}
+      </div>
+
+      ${summary}
+
+      <button
+        type="button"
+        class="journey-toggle"
+        data-index="${index}"
+        aria-expanded="false">
+        🕒 Lihat butiran perjalanan
+      </button>
+
+      <div class="journey-details" id="journey-details-${index}" hidden>
+        ${details}
+      </div>
+    </article>
+  `;
+}
+
+
+  if
 
   const transferArrival =
     item.mid.arrival_time || item.mid.departure_time || "-";
@@ -2734,6 +2992,7 @@ if(!window.L) return;
 
   map.fitBounds(coordinates,{padding:[25,25]});
 }
+
 function renderSearchResults() {
   const results = $("results");
 
@@ -2743,30 +3002,70 @@ function renderSearchResults() {
       ).join("")
     : routeText("noRoutes");
 
-  if (lastSearchResults.length) {
-    lastSearchResults.forEach((item,index) => {
-      if (item.type === "direct") {
-        renderRouteMap(item,index);
-      } else if (item.type === "transfer") {
-        renderTransferMap(
-          item.data,
-          item.t1,
-          item.boarding,
-          item.mid,
-          "transfer-map-1-" + index
-        );
+  // Pasang event listener sekali sahaja
+  if (!results.dataset.toggleHandlerAttached) {
 
-        renderTransferMap(
-          item.data2,
-          item.t2,
-          item.transfer,
-          item.finalStop,
-          "transfer-map-2-" + index
-        );
+    results.addEventListener("click", function(event) {
+
+      const button = event.target.closest(".journey-toggle");
+      if (!button) return;
+
+      const index = Number(button.dataset.index);
+      const details = document.getElementById(
+        "journey-details-" + index
+      );
+
+      const item = lastSearchResults[index];
+
+      if (!details || !item) return;
+
+      const opening = details.hidden;
+
+      details.hidden = !opening;
+
+      button.setAttribute(
+        "aria-expanded",
+        String(opening)
+      );
+
+      button.textContent = opening
+        ? "Tutup butiran perjalanan"
+        : "🕒 Lihat butiran perjalanan";
+
+      // Muatkan peta hanya apabila butiran dibuka
+      if (opening) {
+
+        if (item.type === "direct") {
+
+          renderRouteMap(item,index);
+
+        } else if (item.type === "transfer") {
+
+          renderTransferMap(
+            item.data,
+            item.t1,
+            item.boarding,
+            item.mid,
+            "transfer-map-1-" + index
+          );
+
+          renderTransferMap(
+            item.data2,
+            item.t2,
+            item.transfer,
+            item.finalStop,
+            "transfer-map-2-" + index
+          );
+
+        }
       }
+
     });
+
+    results.dataset.toggleHandlerAttached = "true";
   }
 }
+
 
 function getJourneyDuration(item){
 
