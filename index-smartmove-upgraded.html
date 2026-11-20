@@ -3302,11 +3302,13 @@ const profilPanel = $("profilPanel");
 
 $("closeProfil").addEventListener("click", () => {
   profilPanel.hidden = true;
-  document.querySelector("main").hidden = false;
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
+  const mainPage = document.querySelector("main");
+  mainPage.hidden = false;
+
+  mainPage.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
   });
 });
 
