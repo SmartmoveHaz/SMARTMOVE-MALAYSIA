@@ -1440,46 +1440,67 @@ body {
 </main>
 <!-- ===== HALAMAN KHAS PETA SMARTMOVE ===== -->
 
-<section id="mapPage" class="card" hidden>
 
-  <h2>🗺️ Peta Pengangkutan Berdekatan</h2>
+<section id="mapPage" class="card premium-map-page" hidden>
 
-<select id="nearbyTransportFilter">
-  <option value="Semua">Semua pengangkutan</option>
-  <option value="Bas">🚌 Bas sahaja</option>
-  <option value="KTM">🚆 KTM sahaja</option>
-  <option value="LRT / MRT">🚇 LRT / MRT sahaja</option>
-</select>
-<div id="smartLayersPanel" class="smart-layers-panel">
-  <h3>✨ Smart Layers</h3>
-  <p>Pilih maklumat yang mahu dipaparkan pada peta.</p>
+  <div class="premium-map-header">
+    <div>
+      <span class="premium-map-eyebrow">SMARTMOVE MALAYSIA</span>
+      <h2>Explore Transit</h2>
+      <p>Terokai rangkaian pengangkutan berhampiran anda</p>
+    </div>
+    <div class="premium-map-icon">⌖</div>
+  </div>
 
-  <label>
-    <input type="checkbox" id="layerBus" checked>
-    🚌 Lokasi bas
-  </label>
+  <div class="premium-map-controls">
+    <select id="nearbyTransportFilter">
+      <option value="Semua">Semua pengangkutan</option>
+      <option value="Bas">🚌 Bas sahaja</option>
+      <option value="KTM">🚆 KTM sahaja</option>
+      <option value="LRT / MRT">🚇 LRT / MRT sahaja</option>
+    </select>
+  </div>
 
-  <label>
-    <input type="checkbox" id="layerRail" checked>
-    🚆 KTM / LRT / MRT
-  </label>
+  <div id="smartLayersPanel" class="smart-layers-panel">
+    <div class="premium-layer-heading">
+      <div>
+        <span>MAP CONTROLS</span>
+        <h3>Smart Layers</h3>
+      </div>
+      <span class="premium-layer-symbol">✦</span>
+    </div>
 
-  <label>
-    <input type="checkbox" id="layerRadius">
-    📍 Kawasan sekitar saya
-  </label>
+    <p>Pilih maklumat untuk dipaparkan pada peta.</p>
 
-  <label>
-    <input type="checkbox" id="layerInterchange">
-    🔄 Stesen pertukaran
-  </label>
-</div>
-<div id="mapDiagnostics"></div>
+    <label>
+      <input type="checkbox" id="layerBus" checked>
+      🚌 Lokasi bas
+    </label>
+
+    <label>
+      <input type="checkbox" id="layerRail" checked>
+      🚆 KTM / LRT / MRT
+    </label>
+
+    <label>
+      <input type="checkbox" id="layerRadius">
+      📍 Kawasan sekitar saya
+    </label>
+
+    <label>
+      <input type="checkbox" id="layerInterchange">
+      🔄 Stesen pertukaran
+    </label>
+  </div>
+
+  <div id="mapDiagnostics"></div>
+
   <div id="nearbyStations"></div>
 
   <div id="nearbyMap" class="nearby-map"></div>
 
 </section>
+
 
 <!-- ===== SMARTMOVE SAVED HUB ===== -->
 <section id="savedPage" class="card" hidden>
