@@ -3866,26 +3866,14 @@ $("swapLocations").addEventListener("click", () => {
 /* ===== PAPAR PETA STESEN BERDEKATAN ===== */
 function renderNearbyStationsList(nearby) {
   const output = $("nearbyStations");
-  const filterElement = $("nearbyTransportFilter");
-
-  if (!output) return;
-
-  const selectedType = filterElement
-  ? filterElement.value
-  : "Semua";
-
-const busLayer = $("layerBus");
+  const busLayer = $("layerBus");
 const railLayer = $("layerRail");
 
 const showBus = busLayer ? busLayer.checked : true;
 const showRail = railLayer ? railLayer.checked : true;
 
 const filtered = nearby.filter(stop => {
-  const matchesTransport =
-    selectedType === "Semua" ||
-    stop.transportType === selectedType;
-
-  const matchesLayer =
+  return (
     (stop.transportType === "Bas" && showBus) ||
     (
       ["KTM", "LRT / MRT"].includes(stop.transportType) &&
@@ -3895,9 +3883,8 @@ const filtered = nearby.filter(stop => {
       stop.transportType === "Pengangkutan" &&
       showBus &&
       showRail
-    );
-
-  return matchesTransport && matchesLayer;
+    )
+  );
 });
 
   output.innerHTML = "";
