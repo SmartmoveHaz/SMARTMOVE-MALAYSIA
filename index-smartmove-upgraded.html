@@ -1642,7 +1642,13 @@ const calendarByService = new Map(
 );
 
 const exceptionsByServiceDate = new Map(
-  const frequenciesByTrip = new Map();
+  exceptions.map(row => [
+    row.service_id + "|" + row.date,
+    row
+  ])
+);
+
+const frequenciesByTrip = new Map();
 
 for (const frequency of frequencies) {
   if (!frequenciesByTrip.has(frequency.trip_id)) {
@@ -1651,11 +1657,6 @@ for (const frequency of frequencies) {
 
   frequenciesByTrip.get(frequency.trip_id).push(frequency);
 }
-  exceptions.map(row => [
-    row.service_id + "|" + row.date,
-    row
-  ])
-);
   const routeById = new Map(
     routes.map(route => [route.route_id,route])
   );
