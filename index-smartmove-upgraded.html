@@ -3232,7 +3232,64 @@ $("swapLocations").addEventListener("click", () => {
   $("to-suggestions").innerHTML = "";
 });
 /* ===== PAPAR PETA STESEN BERDEKATAN ===== */
+function renderNearbyStationsList(nearby) {
+  const output = $("nearbyStations");
+  const filterElement = $("nearbyTransportFilter");
 
+  if (!output) return;
+
+  const selectedType = filterElement
+    ? filterElement.value
+    : "Semua";
+
+  const filtered = selectedType === "Semua"
+    ? nearby
+    : nearby.filter(
+        stop => stop.transportType === selectedType
+      );
+
+  output.innerHTML = "";
+
+  const heading = document.createElement("p");
+  heading.textContent =
+    "Hentian berdekatan (" + filtered.length + "):";
+  output.appendChild(heading);
+
+  filtered.slice(0, 5).forEach(stop => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "nearby-station-card";
+
+    const name = document.createElement("span");
+    name.className = "nearby-station-name";
+    name.textContent = stop.name;
+
+    const type = document.createElement("span");
+    type.className = "nearby-station-type";
+    type.textContent = stop.transportType;
+
+    const distance = document.createElement("span");
+    distance.className = "nearby-station-distance";
+    distance.textContent = stop.distance < 1
+      ? Math.round(stop.distance * 1000) + " m"
+      : stop.distance.toFixed(2) + " km";
+
+    button.append(name, type, distance);
+
+    button.addEventListener("click", () => {
+      $("from").value = stop.name;
+      $("from-suggestions").innerHTML = "";
+      output.innerHTML = "";
+    });
+
+    output.appendChild(button);
+  });
+
+  if (!filtered.length) {
+    output.textContent =
+      "Tiada hentian bagi kategori ini berdekatan.";
+  }
+}
 function renderNearbyMap(userLat, userLon, nearby) {
 
   const mapElement = $("nearbyMap");
@@ -3255,6 +3312,7 @@ const filteredNearby = selectedType === "Semua"
 if (filterElement) {
   filterElement.onchange = () => {
     renderNearbyMap(userLat, userLon, nearby);
+    renderNearbyStationsList(nearby);
   };
 }
   mapElement.style.display = "block";
@@ -3507,64 +3565,7 @@ $("mapDiagnostics").appendChild(diagnosticPanel);
 $("mapDiagnostics").appendChild(nearbySummary);
 
 renderNearbyMap(userLat, userLon, nearby);
-        output.innerHTML = "";
-
-        const heading = document.createElement("p");
-        heading.textContent = "Stesen paling hampir dengan anda:";
-        output.appendChild(heading);
-
-        nearby.slice(0, 5).forEach(stop => {
-
-          const button = document.createElement("button");
-          button.type = "button";
-          button.style.display = "block";
-          button.style.width = "100%";
-          button.style.margin = "6px 0";
-          button.style.padding = "10px";
-          button.style.textAlign = "left";
-
-          button.className = "nearby-station-card";
-
-const stationName = document.createElement("span");
-stationName.className = "nearby-station-name";
-stationName.textContent =
-  stop.name + " · " + stop.distance.toFixed(2) + " km";
-
-const transportBadge = document.createElement("span");
-transportBadge.className = "nearby-station-type";
-transportBadge.textContent = stop.transportType;
-if (stop.transportType === "Bas") {
-  transportBadge.classList.add("nearby-type-bus");
-} else if (stop.transportType === "KTM") {
-  transportBadge.classList.add("nearby-type-ktm");
-} else if (stop.transportType === "LRT / MRT") {
-  transportBadge.classList.add("nearby-type-rail");
-} else {
-  transportBadge.classList.add("nearby-type-other");
-}
-const stationDistance = document.createElement("span");
-stationDistance.className = "nearby-station-distance";
-stationDistance.textContent =
-  stop.distance < 1
-    ? Math.round(stop.distance * 1000) + " m"
-    : stop.distance.toFixed(2) + " km";
-
-button.append(
-  stationName,
-  transportBadge,
-  stationDistance
-);
-
-          button.addEventListener("click", () => {
-            $("from").value = stop.name;
-            $("from-suggestions").innerHTML = "";
-            output.innerHTML = "";
-          });
-
-          output.appendChild(button);
-        });
-
-        if (!nearby.length) {
+        renderNearbyStationsList(nearby);
           output.textContent =
             "Tiada stesen dengan koordinat GPS yang sah ditemui.";
         }
