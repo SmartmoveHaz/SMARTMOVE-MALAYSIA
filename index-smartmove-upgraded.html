@@ -1146,6 +1146,194 @@ body {
   }
 }
 
+/* ===== SMARTMOVE PREMIUM MOBILITY DASHBOARD ===== */
+
+.premium-map-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+  background: #f5f8fa;
+  border: 1px solid #e1e9ed;
+  border-radius: 24px;
+  box-shadow: 0 14px 40px rgba(8, 43, 58, 0.08);
+}
+
+.premium-map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  order: 1;
+}
+
+.premium-map-eyebrow {
+  color: #07847d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.premium-map-header h2 {
+  margin: 5px 0;
+  color: #102f40;
+  font-size: 25px;
+  font-weight: 850;
+  letter-spacing: -0.8px;
+}
+
+.premium-map-header p {
+  margin: 0;
+  color: #71828c;
+  font-size: 12px;
+}
+
+.premium-map-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  background: #e0f2ef;
+  color: #087f78;
+  font-size: 27px;
+}
+
+#nearbyMap {
+  order: 2;
+  width: 100%;
+  height: 56vh;
+  min-height: 360px;
+  border: 1px solid #d8e4e8;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(16, 47, 64, 0.13);
+}
+
+.premium-map-controls {
+  order: 3;
+}
+
+#nearbyTransportFilter {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 15px;
+  border: 1px solid #dce6e9;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #183746;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(16, 47, 64, 0.05);
+}
+
+#smartLayersPanel {
+  order: 4;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid #dce8e9;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #ffffff, #edf6f5);
+  box-shadow: 0 8px 22px rgba(16, 47, 64, 0.06);
+}
+
+.premium-layer-heading,
+#smartLayersPanel > p {
+  grid-column: 1 / -1;
+}
+
+.premium-layer-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.premium-layer-heading span:first-child {
+  color: #07847d;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.7px;
+}
+
+.premium-layer-heading h3 {
+  margin: 4px 0 0;
+  color: #102f40;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.premium-layer-symbol {
+  color: #07847d;
+  font-size: 25px;
+}
+
+#smartLayersPanel > p {
+  margin: -4px 0 2px;
+  color: #71828c;
+  font-size: 12px;
+}
+
+#smartLayersPanel label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 54px;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid #e0e9eb;
+  border-radius: 13px;
+  background: #ffffff;
+  color: #183746;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+#smartLayersPanel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: #07847d;
+}
+
+#mapDiagnostics {
+  order: 5;
+}
+
+#nearbyStations {
+  order: 6;
+  margin-top: 0;
+}
+
+@media (max-width: 480px) {
+  .premium-map-page {
+    padding: 13px;
+    gap: 13px;
+  }
+
+  .premium-map-header h2 {
+    font-size: 22px;
+  }
+
+  #nearbyMap {
+    height: 52vh;
+    min-height: 330px;
+  }
+
+  #smartLayersPanel {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  #smartLayersPanel label {
+    padding: 8px;
+    font-size: 11px;
+  }
+}
+
 </style>
 </head>
 
