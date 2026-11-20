@@ -1329,6 +1329,14 @@ body {
 <section id="mapPage" class="card" hidden>
 
   <h2>🗺️ Peta Pengangkutan Berdekatan</h2>
+
+<select id="nearbyTransportFilter">
+  <option value="Semua">Semua pengangkutan</option>
+  <option value="Bas">🚌 Bas sahaja</option>
+  <option value="KTM">🚆 KTM sahaja</option>
+  <option value="LRT / MRT">🚇 LRT / MRT sahaja</option>
+</select>
+
 <div id="mapDiagnostics"></div>
   
 
@@ -3232,7 +3240,23 @@ function renderNearbyMap(userLat, userLon, nearby) {
   if (!mapElement || !window.L) {
     return;
   }
+const filterElement = $("nearbyTransportFilter");
 
+const selectedType = filterElement
+  ? filterElement.value
+  : "Semua";
+
+const filteredNearby = selectedType === "Semua"
+  ? nearby
+  : nearby.filter(
+      stop => stop.transportType === selectedType
+    );
+
+if (filterElement) {
+  filterElement.onchange = () => {
+    renderNearbyMap(userLat, userLon, nearby);
+  };
+}
   mapElement.style.display = "block";
 
   if (window.smartmoveNearbyMap) {
@@ -3267,7 +3291,7 @@ function renderNearbyMap(userLat, userLon, nearby) {
 
   bounds.push([userLat, userLon]);
 
-  nearby.slice(0, 30).forEach(stop => {
+  filteredNearby.slice(0, 30).forEach(stop => {
 
     const marker = L.circleMarker(
       [stop.lat, stop.lon],
