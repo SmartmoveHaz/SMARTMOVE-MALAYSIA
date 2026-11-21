@@ -4038,7 +4038,23 @@ const filteredNearby = nearby.filter(stop => {
 
   const matchesInterchange =
   !showInterchange ||
-  (transferStopsByName.get(norm(stop.name)) || []).length > 1;
+  new Set(
+  (transferStopsByName.get(norm(stop.name)) || [])
+    .map(match => {
+      const feedName = (match.data.name || "").toLowerCase();
+
+      if (feedName.includes("ktm")) return "KTM";
+      if (feedName.includes("rail")) return "RAIL";
+      if (
+        feedName.includes("bus") ||
+        feedName.includes("feeder") ||
+        feedName.includes("bas")
+      ) return "BUS";
+
+      return null;
+    })
+    .filter(Boolean)
+).size > 1
 
 return matchesTransport &&
        matchesRadius &&
