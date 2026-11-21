@@ -4036,7 +4036,13 @@ const filteredNearby = nearby.filter(stop => {
   const matchesRadius =
     !showRadius || stop.distance <= radiusKm;
 
-  return matchesTransport && matchesRadius;
+  const matchesInterchange =
+  !showInterchange ||
+  (transferStopsByName.get(norm(stop.name)) || []).length > 1;
+
+return matchesTransport &&
+       matchesRadius &&
+       matchesInterchange;
 });
 [busLayer, railLayer, radiusLayer, radiusSelect].forEach(layer => {
   if (layer) {
