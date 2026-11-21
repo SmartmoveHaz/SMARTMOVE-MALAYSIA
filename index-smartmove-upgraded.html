@@ -1251,11 +1251,14 @@ max-height: none;
 
 #smartLayersPanel {
   order: 4;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   gap: 10px;
+  width: 100%;
   margin: 0;
   padding: 16px;
+  box-sizing: border-box;
   border: 1px solid #dce8e9;
   border-radius: 20px;
   background: linear-gradient(145deg, #ffffff, #edf6f5);
