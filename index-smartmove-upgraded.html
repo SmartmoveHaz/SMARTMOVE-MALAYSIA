@@ -4048,8 +4048,12 @@ const filteredNearby = nearby.filter(stop => {
   mapElement.style.display = "block";
 
   if (window.smartmoveNearbyMap) {
-    window.smartmoveNearbyMap.remove();
-  }
+  window.smartmoveNearbyMap.off();
+  window.smartmoveNearbyMap.remove();
+  window.smartmoveNearbyMap = null;
+}
+
+mapElement.innerHTML = "";
 
   const map = L.map(mapElement).setView(
     [userLat, userLon],
