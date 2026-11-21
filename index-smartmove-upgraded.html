@@ -1211,7 +1211,21 @@ max-height: none;
   overflow: hidden;
   box-shadow: 0 12px 30px rgba(16, 47, 64, 0.13);
 }
+.map-canvas-wrapper {
+  width: 100%;
+  height: calc(100dvh - 240px);
+  min-height: 520px;
+  flex-shrink: 0;
+  position: relative;
+}
 
+.map-canvas-wrapper #nearbyMap {
+  width: 100%;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: none !important;
+  border-radius: 18px;
+}
 .premium-map-controls {
   order: 3;
 }
