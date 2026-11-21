@@ -4044,7 +4044,7 @@ return matchesTransport &&
        matchesRadius &&
        matchesInterchange;
 });
-[busLayer, railLayer, radiusLayer, radiusSelect].forEach(layer => {
+[busLayer, railLayer, radiusLayer, radiusSelect, interchangeLayer].forEach(layer => {
   if (layer) {
     layer.onchange = () => {
       renderNearbyMap(userLat, userLon, nearby);
