@@ -4020,6 +4020,24 @@ output.appendChild(heading);
 
     const type = document.createElement("span");
     type.className = "nearby-station-type";
+
+if (stop.transportType.includes("Bas")) {
+  type.classList.add("nearby-type-bus");
+  type.textContent = "🚌 Bas";
+} else if (stop.transportType.includes("KTM")) {
+  type.classList.add("nearby-type-ktm");
+  type.textContent = "🚆 KTM";
+} else if (
+  stop.transportType.includes("LRT") ||
+  stop.transportType.includes("MRT")
+) {
+  type.classList.add("nearby-type-rail");
+  type.textContent = "🚇 " + stop.transportType;
+} else {
+  type.classList.add("nearby-type-other");
+  type.textContent = stop.transportType;
+}
+    type.className = "nearby-station-type";
     type.textContent = stop.transportType;
 
     const distance = document.createElement("span");
