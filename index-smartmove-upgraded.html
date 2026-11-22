@@ -3983,7 +3983,7 @@ return matchesTransport &&
 
   const heading = document.createElement("p");
   heading.textContent =
-    "Hentian berdekatan (" + filtered.length + "):";
+    "Hentian berdekatan (" + groupedFiltered.length + "):";
   output.appendChild(heading);
 const groupedFiltered = [];
 
@@ -4008,7 +4008,7 @@ filtered.forEach(stop => {
     groupedFiltered.push({ ...stop });
   }
 });
-  filtered.slice(0, 5).forEach(stop => {
+  groupedFiltered.slice(0, 5).forEach(stop => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "nearby-station-card";
