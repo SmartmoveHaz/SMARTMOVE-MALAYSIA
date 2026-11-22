@@ -3990,11 +3990,10 @@ const groupedFiltered = [];
 filtered.forEach(stop => {
   const existing = groupedFiltered.find(item =>
     norm(item.name) === norm(stop.name) &&
-    calculateDistance(
-      item.lat,
-      item.lon,
-      stop.lat,
-      stop.lon
+    Math.hypot(
+      (item.lat - stop.lat) * 111,
+      (item.lon - stop.lon) * 111 *
+      Math.cos(item.lat * Math.PI / 180)
     ) <= 0.25
   );
 
