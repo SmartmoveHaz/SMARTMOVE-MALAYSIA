@@ -4005,7 +4005,35 @@ return matchesTransport &&
       ? Math.round(stop.distance * 1000) + " m"
       : stop.distance.toFixed(2) + " km";
 
-    button.append(name, type, distance);
+    const interchangeModes = [
+  ...new Set(
+    (transferStopsByName.get(norm(stop.name)) || [])
+      .map(match => {
+        const feedName = (match.data.name || "").toLowerCase();
+
+        if (feedName.includes("ktm")) return "KTM";
+        if (feedName.includes("rail")) return "LRT / MRT";
+        if (
+          feedName.includes("bus") ||
+          feedName.includes("feeder") ||
+          feedName.includes("bas")
+        ) return "Bas";
+
+        return null;
+      })
+      .filter(Boolean)
+  )
+];
+
+if (interchangeModes.length > 1) {
+  const interchange = document.createElement("span");
+  interchange.className = "nearby-station-type";
+  interchange.textContent =
+    "🔄 Pertukaran: " + interchangeModes.join(" + ");
+  button.append(name, type, interchange, distance);
+} else {
+  button.append(name, type, distance);
+}
 
     button.addEventListener("click", () => {
       $("from").value = stop.name;
