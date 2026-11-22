@@ -3961,16 +3961,15 @@ const matchesInterchange =
       .map(match => {
         const feedName = (match.data.name || "").toLowerCase();
 
-if (feedName.includes("ktm")) return "KTM";
-if (feedName.includes("mrt")) return "MRT";
-if (feedName.includes("lrt")) return "LRT";
-if (
-  feedName.includes("bus") ||
-  feedName.includes("feeder") ||
-  feedName.includes("bas")
-) return "Bas";
+        if (feedName.includes("ktm")) return "KTM";
+        if (feedName.includes("rail")) return "RAIL";
+        if (
+          feedName.includes("bus") ||
+          feedName.includes("feeder") ||
+          feedName.includes("bas")
+        ) return "BUS";
 
-return null;
+        return null;
       })
       .filter(Boolean)
   ).size > 1;
@@ -4053,7 +4052,9 @@ if (stop.transportType.includes("Bas")) {
         const feedName = (match.data.name || "").toLowerCase();
 
         if (feedName.includes("ktm")) return "KTM";
-        if (feedName.includes("rail")) return "LRT / MRT";
+        if (feedName.includes("mrt")) return "MRT";
+if (feedName.includes("lrt")) return "LRT";
+if (feedName.includes("rail")) return "LRT";
         if (
           feedName.includes("bus") ||
           feedName.includes("feeder") ||
