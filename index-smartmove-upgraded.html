@@ -3985,7 +3985,30 @@ return matchesTransport &&
   heading.textContent =
     "Hentian berdekatan (" + filtered.length + "):";
   output.appendChild(heading);
+const groupedFiltered = [];
 
+filtered.forEach(stop => {
+  const existing = groupedFiltered.find(item =>
+    norm(item.name) === norm(stop.name) &&
+    calculateDistance(
+      item.lat,
+      item.lon,
+      stop.lat,
+      stop.lon
+    ) <= 0.25
+  );
+
+  if (existing) {
+    const modes = new Set(
+      existing.transportType.split(" / ")
+    );
+    modes.add(stop.transportType);
+
+    existing.transportType = [...modes].join(" / ");
+  } else {
+    groupedFiltered.push({ ...stop });
+  }
+});
   filtered.slice(0, 5).forEach(stop => {
     const button = document.createElement("button");
     button.type = "button";
