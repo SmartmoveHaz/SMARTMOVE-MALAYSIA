@@ -647,6 +647,15 @@ header {
 }
 
 .nearby-type-rail {
+  .nearby-type-mrt {
+  background: #CCFBF1;
+  color: #0F766E;
+}
+
+.nearby-type-lrt {
+  background: #EDE9FE;
+  color: #6D28D9;
+}
   background: #EDE9FE;
   color: #6D28D9;
 }
@@ -4081,10 +4090,13 @@ if (interchangeModes.length > 1) {
     } else if (mode === "KTM") {
       badge.classList.add("nearby-type-ktm");
       badge.textContent = "🚆 KTM";
-    } else {
-      badge.classList.add("nearby-type-rail");
-      badge.textContent = "🚇 LRT / MRT";
-    }
+    } else if (mode === "MRT") {
+  badge.classList.add("nearby-type-mrt");
+  badge.textContent = "🚇 MRT";
+} else if (mode === "LRT") {
+  badge.classList.add("nearby-type-lrt");
+  badge.textContent = "🚈 LRT";
+}
 
     interchange.appendChild(badge);
   });
