@@ -4054,27 +4054,29 @@ if (stop.transportType.includes("Bas")) {
       ? Math.round(stop.distance * 1000) + " m"
       : stop.distance.toFixed(2) + " km";
 
-    const interchangeModes = [
-  ...new Set(
-    (transferStopsByName.get(norm(stop.name)) || [])
-      .map(match => {
-        const feedName = (match.data.name || "").toLowerCase();
+        const interchangeModes = [
+      ...new Set(
+        (transferStopsByName.get(norm(stop.name)) || [])
+          .flatMap(match => {
+            const stopId = match.stop.stop_id;
+            const tripIds = match.data.tripsByStop.get(stopId) || [];
 
-        if (feedName.includes("ktm")) return "KTM";
-        if (feedName.includes("mrt")) return "MRT";
-if (feedName.includes("lrt")) return "LRT";
-if (feedName.includes("rail")) return "LRT";
-        if (
-          feedName.includes("bus") ||
-          feedName.includes("feeder") ||
-          feedName.includes("bas")
-        ) return "Bas";
+            return tripIds
+              .map(tripId => {
+                const trip = match.data.tripById.get(tripId);
+                const mode = getTransportMode(match.data, trip);
 
-        return null;
-      })
-      .filter(Boolean)
-  )
-];
+                if (mode === "ktm") return "KTM";
+                if (mode === "mrt") return "MRT";
+                if (mode === "lrt") return "LRT";
+                if (mode === "bus") return "Bas";
+
+                return null;
+              })
+              .filter(Boolean);
+          })
+      )
+    ];
 
 if (interchangeModes.length > 1) {
   const interchange = document.createElement("div");
