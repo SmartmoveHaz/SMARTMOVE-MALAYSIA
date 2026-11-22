@@ -4404,11 +4404,18 @@ if (feedName.includes("ktm")) {
 const tripIds = data.tripsByStop.get(stop.stop_id) || [];
 
 const stopModes = [
-  ...new Set(
-    tripIds
+  ...new Set([
+    ...tripIds
       .map(id => getTransportMode(data, data.tripById.get(id)))
-      .filter(Boolean)
-  )
+      .filter(Boolean),
+
+    ...(stop.route_id
+      ? [getTransportMode(
+          data,
+          { route_id: stop.route_id }
+        )].filter(Boolean)
+      : [])
+  ])
 ];
 
 const markerMode =
