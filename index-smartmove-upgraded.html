@@ -4283,9 +4283,6 @@ if (showRadius) {
 const details = document.createElement("p");
     details.textContent =
   stop.transportType + " · " +
-  "route_id: " + stop.debugStopRouteId + " · " +
-  "stopModes: " + stop.debugStopModes + " · " +
-  "routes: " + stop.debugTripRoutes + " · " +
   (stop.distance < 1
     ? Math.round(stop.distance * 1000) + " m"
     : stop.distance.toFixed(2) + " km");
@@ -4433,19 +4430,7 @@ nearby.push({
   name: stop.stop_name,
   transportType: transportType,
     markerMode: markerMode,
-    debugStopRouteId: stop.route_id || "TIADA",
-debugStopModes: stopModes.join(", ") || "KOSONG",
-debugTripRoutes: [
-  ...new Set(
-    tripIds.map(id => {
-      const trip = data.tripById.get(id);
-      const route = data.routeById.get(trip?.route_id);
-      return route
-        ? `${route.route_id} / ${route.route_short_name} / ${route.route_long_name}`
-        : trip?.route_id;
-    }).filter(Boolean)
-  )
-].slice(0, 3).join(" | ") || "TIADA",
+    
   lat: lat,
   lon: lon,
   distance: calculateDistance(
