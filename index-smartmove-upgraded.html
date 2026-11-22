@@ -2748,7 +2748,11 @@ function getTransportMode(data, trip){
     (route.route_long_name || "") + " " +
     (route.route_desc || "")
   );
-
+if(
+  /monorail|monorel/.test(routeText)
+){
+  return "monorail";
+}
   if(
     /\b(kgl|pyl)\b/.test(shortName) ||
     /\bmrt\b|kajang|putrajaya/.test(routeText)
@@ -2795,7 +2799,7 @@ function getTransportLabel(data, trip) {
 
   if (mode === "lrt") return "LRT";
   if (mode === "mrt") return "MRT";
-
+  if (mode === "monorail") return "Monorel";
   if (mode === "bus") {
     return data.name === "MRT Feeder"
       ? "MRT FEEDER"
@@ -4265,6 +4269,7 @@ if (showRadius) {
         fillColor:
   stop.markerMode === "mrt" ? "#B91C1C" :
   stop.markerMode === "lrt" ? "#6D28D9" :
+  stop.markerMode === "monorail" ? "#EA580C" :
   stop.markerMode === "ktm" ? "#BE185D" :
   stop.markerMode === "bus" ? "#1D4ED8" :
   "#9CA3AF",
@@ -4409,6 +4414,7 @@ const stopModes = [
 const markerMode =
   stopModes.includes("mrt") ? "mrt" :
   stopModes.includes("lrt") ? "lrt" :
+  stopModes.includes("monorail") ? "monorail" :
   stopModes.includes("ktm") ? "ktm" :
   stopModes.includes("bus") ? "bus" :
   null;
