@@ -4066,10 +4066,27 @@ if (stop.transportType.includes("Bas")) {
 ];
 
 if (interchangeModes.length > 1) {
-  const interchange = document.createElement("span");
-  interchange.className = "nearby-station-type";
-  interchange.textContent =
-    "🔄 Pertukaran: " + interchangeModes.join(" + ");
+  const interchange = document.createElement("div");
+  interchange.className = "nearby-interchange-badges";
+
+  interchangeModes.forEach(mode => {
+    const badge = document.createElement("span");
+    badge.className = "nearby-station-type";
+
+    if (mode === "Bas") {
+      badge.classList.add("nearby-type-bus");
+      badge.textContent = "🚌 Bas";
+    } else if (mode === "KTM") {
+      badge.classList.add("nearby-type-ktm");
+      badge.textContent = "🚆 KTM";
+    } else {
+      badge.classList.add("nearby-type-rail");
+      badge.textContent = "🚇 LRT / MRT";
+    }
+
+    interchange.appendChild(badge);
+  });
+
   button.append(name, type, interchange, distance);
 } else {
   button.append(name, type, distance);
