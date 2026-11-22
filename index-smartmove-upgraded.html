@@ -3981,10 +3981,7 @@ return matchesTransport &&
 
   output.innerHTML = "";
 
-  const heading = document.createElement("p");
-  heading.textContent =
-    "Hentian berdekatan (" + groupedFiltered.length + "):";
-  output.appendChild(heading);
+  
 const groupedFiltered = [];
 
 filtered.forEach(stop => {
@@ -4008,6 +4005,10 @@ filtered.forEach(stop => {
     groupedFiltered.push({ ...stop });
   }
 });
+const heading = document.createElement("p");
+heading.textContent =
+  "Hentian berdekatan (" + groupedFiltered.length + "):";
+output.appendChild(heading);
   groupedFiltered.slice(0, 5).forEach(stop => {
     const button = document.createElement("button");
     button.type = "button";
