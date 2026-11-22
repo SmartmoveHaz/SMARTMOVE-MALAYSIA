@@ -4263,11 +4263,11 @@ if (showRadius) {
         color: "#ffffff",
         weight: 2,
         fillColor:
-          stop.transportType === "Bas"
-            ? "#16A34A"
-            : stop.transportType === "KTM"
-              ? "#9333EA"
-              : "#E58A16",
+  stop.markerMode === "mrt" ? "#B91C1C" :
+  stop.markerMode === "lrt" ? "#6D28D9" :
+  stop.markerMode === "ktm" ? "#BE185D" :
+  stop.markerMode === "bus" ? "#1D4ED8" :
+  "#9CA3AF",
         fillOpacity: 1
       }
     );
@@ -4417,6 +4417,7 @@ const markerMode =
 nearby.push({
   name: stop.stop_name,
   transportType: transportType,
+    markerMode: markerMode,
   lat: lat,
   lon: lon,
   distance: calculateDistance(
