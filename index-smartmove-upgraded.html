@@ -4396,6 +4396,23 @@ if (feedName.includes("ktm")) {
   transportType = "Bas";
 }
 
+const tripIds = data.tripsByStop.get(stop.stop_id) || [];
+
+const stopModes = [
+  ...new Set(
+    tripIds
+      .map(id => getTransportMode(data, data.tripById.get(id)))
+      .filter(Boolean)
+  )
+];
+
+const markerMode =
+  stopModes.includes("mrt") ? "mrt" :
+  stopModes.includes("lrt") ? "lrt" :
+  stopModes.includes("ktm") ? "ktm" :
+  stopModes.includes("bus") ? "bus" :
+  null;
+
 
 nearby.push({
   name: stop.stop_name,
