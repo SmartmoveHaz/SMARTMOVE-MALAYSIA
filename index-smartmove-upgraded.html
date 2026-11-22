@@ -334,7 +334,52 @@ button:disabled {
   color: #075F59;
   box-shadow: 0 3px 10px #087F7820;
 }
+/* PILIHAN PENGANGKUTAN KOMPAK DAN STATIK */
+.transport-selector {
+  padding: 10px;
+  margin: 10px 0 14px;
+}
 
+.transport-options {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.transport-option {
+  padding: 7px 3px;
+  gap: 3px;
+  border-radius: 9px;
+  transition: none !important;
+}
+
+.transport-option .transport-image {
+  height: 34px;
+}
+
+.transport-option .transport-image img {
+  height: 34px;
+  max-width: 54px;
+}
+
+.transport-option small {
+  font-size: 10px;
+}
+
+.transport-option span {
+  animation: none !important;
+  transform: none !important;
+}
+
+.transport-option:active {
+  transform: none !important;
+}
+.transport-option[data-mode="ktm"] small {
+  font-size: 9px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+}
 .transport-hint {
   color: #647C80;
 }
